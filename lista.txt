@@ -1,5 +1,0 @@
-Maquina qemu riscv 
-Achar um processador riscv ????
-Achar modelo de maquina que use o processador para o qemu emular
-https://bringyourownit.com/2019/03/01/how-to-build-a-risc-v-system-in-just-30-minutes/ ????
-Zephyr?
