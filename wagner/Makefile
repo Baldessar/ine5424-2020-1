@@ -1,9 +1,10 @@
 
 CC=riscv64-unknown-linux-gnu-g++
-CFLAGS= -Wall -Wextra -pedantic -Wextra -O0 -g -std=c++17
-CFLAGS+= -static -ffreestanding -nostdlib -fno-rtti -fno-exceptions
+CFLAGS= -Wall -Wextra -pedantic -Wextra -O0 -g -std=c++17 -mcmodel=medany
+CFLAGS+= -static -ffreestanding -nostdlib -fno-rtti -fno-exceptions 
 CFLAGS+= -march=rv64gc -mabi=lp64
 SOURCES_ASM=$(wildcard asm/*.s)
+SOURCES_C=$(wildcard c/*.c)
 LINKER_SCRIPT=main.ld
 INCLUDES=
 OUT=main.elf

@@ -3,11 +3,6 @@
 # Stephen Marz
 # 8 February 2019
 
-
-.align 2
-.equ UART_BASE,         0x10013000
-.equ UART_REG_TXFIFO,   0
-
 # Disable generation of compressed instructions.
 .option norvc
 
@@ -59,6 +54,7 @@ _start:
 	# Machine's exception program counter (MEPC) is set to `kmain`.
 	la		t1, main
 	csrw	mepc, t1
+	addi t4, x0, 1
 	# Machine's trap vector base address is set to `asm_trap_vector`.
 	la		t2, asm_trap_vector
 	csrw	mtvec, t2
