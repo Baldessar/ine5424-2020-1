@@ -1,9 +1,9 @@
 
 CC=riscv64-unknown-linux-gnu-g++
 CFLAGS= -Wall -Wextra -pedantic -Wextra -O0 -g -std=c++17 -mcmodel=medany
-CFLAGS+= -static -ffreestanding -nostdlib -fno-rtti -fno-exceptions 
+CFLAGS+= -static -ffreestanding -nostdlib -fno-rtti -fno-exceptions
 CFLAGS+= -march=rv64gc -mabi=lp64
-SOURCES_ASM=$(wildcard asm/*.s)
+SOURCES_ASM=$(wildcard asm/boot.s)
 SOURCES_C=$(wildcard c/*.c)
 LINKER_SCRIPT=main.ld
 INCLUDES=
@@ -23,9 +23,9 @@ all:
 viewer: run
 	vncviewer 127.0.0.1:5901
 
-run: all 
+run: all
 	$(QEMU) -machine $(MACH) -cpu $(CPU) -smp $(CPUS) -m $(MEM) -serial mon:stdio -kernel $(OUT)
-	
+
 
 clean:
 	rm *.o

@@ -15,25 +15,34 @@ char tab[17] = "0123456789ABCDEF";
 
 int uputc(char c)
 {
+  asm volatile("addi t4, zero, 2");
   while((up->FR & 0x20));
+  asm volatile("addi t4, zero, 3");
   (up->DR) = (int)c;
+  asm volatile("addi t4, zero, 4");
   return 0;
 }
 
 int uart_init()
 {
     up= (UART *)(UART0_BASE);
+    asm volatile("addi t5, zero, 10");
     up->imsc |= (1<<4); // enable UART RXIM interrupt
+    asm volatile("addi t6, zero, 11");
     return 0;
 
 }
 
 int uprints(char *s)
 {
-  while(*s){
-    uputc(*s);
-    s++;
-  }
+  asm volatile("addi t4, zero, 1");
+  uputc('a');
+
+  // while(*s){
+  //   asm volatile("addi t4, zero, 2");
+  //   uputc(*s);
+  //   s++;
+  // }
   return 0;
 
 }
@@ -100,13 +109,14 @@ int uprinti(int x)
 }
 
 int uprintf(char *fmt,...)
-{
+{ asm volatile("addi t4, zero, 1");
   int *ip;
   char *cp;
   cp = fmt;
   ip = (int *)&fmt + 1;
-
+  asm volatile("addi t4, zero, 2");
   while(*cp){
+    asm volatile("addi t4, zero, 3");
     if (*cp != '%'){
       uputc(*cp);
       if (*cp=='\n')
@@ -123,6 +133,7 @@ int uprintf(char *fmt,...)
     case 'x': uprintx((u32)*ip);          break;
     }
     cp++; ip++;
+  asm volatile("addi t4, t4, 1");
   }
   return 0;
 
