@@ -1,14 +1,9 @@
-#include "c/uart.c"
 
-int mult() {
-    int a = 1000;
-    int b = 3;
-    return a*b;
-}
+#include "c/mmu.c"
+
 
 int main() {
-    uart_init();
-    char * joao = "AAAAA" ;
-    uprints(joao);
+    asm volatile("addi t4, x0, 1");
+
     return 0;
 }
