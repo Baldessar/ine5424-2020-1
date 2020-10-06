@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #define PAGE_SIZE 1<<12
 
 static uint64_t HEAP_START;
@@ -13,7 +14,7 @@ uint64_t align_val(uint64_t val, uint64_t order){
 
 // We will use ALLOC_START to mark the start of the actual
 // memory we can dish out.
-static uint64_t* ALLOC_START = 0;
+static uint64_t ALLOC_START = 0;
 const uint64_t PAGE_ORDER = 12;
 
 /// Align (set to a multiple of some power of two)
@@ -31,7 +32,7 @@ enum page_bits {
 // as well, where each 4096-byte chunk of memory has a structure
 // associated with it. However, there structure is much larger.
 typedef struct {
-	char flags
+	char flags;
 }page;
 
 bool is_last(page p){
@@ -97,182 +98,167 @@ void init() {
 		// & !(PAGE_SIZE - 1);
 		ALLOC_START = align_val(
 		                        HEAP_START
-		                        + num_pages * size_of::<Page,>(),
-		                        PAGE_ORDER,
+		                        + num_pages * sizeof(page),
+		                        PAGE_ORDER
 		);
 }
 
 /// Allocate a page or multiple pages
 /// pages: the number of PAGE_SIZE pages to allocate
-pub fn alloc(pages: usize) -> *mut u8 {
+char* alloc(uint64_t pages){
 	// We have to find a contiguous allocation of pages
-	assert!(pages > 0);
-	unsafe {
-		// We create a Page structure for each page on the heap. We
-		// actually might have more since HEAP_SIZE moves and so does
-		// the size of our structure, but we'll only waste a few bytes.
-		let num_pages = HEAP_SIZE / PAGE_SIZE;
-		let ptr = HEAP_START as *mut Page;
-		for i in 0..num_pages - pages {
-			let mut found = false;
-			// Check to see if this Page is free. If so, we have our
-			// first candidate memory address.
-			if (*ptr.add(i)).is_free() {
-				// It was FREE! Yay!
-				found = true;
-				for j in i..i + pages {
-					// Now check to see if we have a
-					// contiguous allocation for all of the
-					// request pages. If not, we should
-					// check somewhere else.
-					if (*ptr.add(j)).is_taken() {
-						found = false;
-						break;
-					}
-				}
-			}
-			// We've checked to see if there are enough contiguous
-			// pages to form what we need. If we couldn't, found
-			// will be false, otherwise it will be true, which means
-			// we've found valid memory we can allocate.
-			if found {
-				for k in i..i + pages - 1 {
-					(*ptr.add(k)).set_flag(PageBits::Taken);
-				}
-				// The marker for the last page is
-				// PageBits::Last This lets us know when we've
-				// hit the end of this particular allocation.
-				(*ptr.add(i+pages-1)).set_flag(PageBits::Taken);
-				(*ptr.add(i+pages-1)).set_flag(PageBits::Last);
-				// The Page structures themselves aren't the
-				// useful memory. Instead, there is 1 Page
-				// structure per 4096 bytes starting at
-				// ALLOC_START.
-				return (ALLOC_START + PAGE_SIZE * i)
-				       as *mut u8;
-			}
-		}
-	}
+    // We create a Page structure for each page on the heap. We
+    // actually might have more since HEAP_SIZE moves and so does
+    // the size of our structure, but we'll only waste a few bytes.
+    uint64_t num_pages = HEAP_SIZE / PAGE_SIZE;
+    page* ptr = (page*)HEAP_START;
+    for (int i=0; i<num_pages-pages; i++){
+        bool found = false;
+        // Check to see if this Page is free. If so, we have our
+        // first candidate memory address.
+        if (is_free(*(ptr+i))) {
+            // It was FREE! Yay!
+            found = true;
+            for (int j=i; j< (i+pages); i++) {
+                // Now check to see if we have a
+                // contiguous allocation for all of the
+                // request pages. If not, we should
+                // check somewhere else.
+                if (is_taken(*(ptr + j))) {
+                    found = false;
+                    break;
+                }
+            }
+        }
+        // We've checked to see if there are enough contiguous
+        // pages to form what we need. If we couldn't, found
+        // will be false, otherwise it will be true, which means
+        // we've found valid memory we can allocate.
+        if (found) {
+            for (int k = i; k<(i + pages - 1); k++) {
+                set_flag(ptr + k, taken);
+            }
+            // The marker for the last page is
+            // PageBits::Last This lets us know when we've
+            // hit the end of this particular allocation.
+
+            set_flag(ptr + i+pages-1, taken);
+            set_flag(ptr + i+pages-1, last);
+            // The Page structures themselves aren't the
+            // useful memory. Instead, there is 1 Page
+            // structure per 4096 bytes starting at
+            // ALLOC_START.
+            return (char*)(ALLOC_START + PAGE_SIZE * i);
+        }
+    }
 
 	// If we get here, that means that no contiguous allocation was
 	// found.
-	null_mut()
+	//null_mut();
 }
 
 /// Allocate and zero a page or multiple pages
 /// pages: the number of pages to allocate
 /// Each page is PAGE_SIZE which is calculated as 1 << PAGE_ORDER
 /// On RISC-V, this typically will be 4,096 bytes.
-pub fn zalloc(pages: usize) -> *mut u8 {
+char* zalloc(uint64_t pages) {
 	// Allocate and zero a page.
 	// First, let's get the allocation
-	let ret = alloc(pages);
-	if !ret.is_null() {
-		let size = (PAGE_SIZE * pages) / 8;
-		let big_ptr = ret as *mut u64;
-		for i in 0..size {
+	char* ret = alloc(pages);
+	if (ret != NULL) {
+		uint64_t size = (PAGE_SIZE * pages) / 8;
+		uint64_t* big_ptr = (uint64_t*)ret;
+		for (int i=0; i<size; i++){
 			// We use big_ptr so that we can force an
 			// sd (store doubleword) instruction rather than
 			// the sb. This means 8x fewer stores than before.
 			// Typically we have to be concerned about remaining
 			// bytes, but fortunately 4096 % 8 = 0, so we
 			// won't have any remaining bytes.
-			unsafe {
-				(*big_ptr.add(i)) = 0;
-			}
+			*(big_ptr+i) = 0;
 		}
 	}
-	ret
+	return ret;
 }
 
 /// Deallocate a page by its pointer
 /// The way we've structured this, it will automatically coalesce
 /// contiguous pages.
-pub fn dealloc(ptr: *mut u8) {
+void dealloc(char* ptr) {
 	// Make sure we don't try to free a null pointer.
-	assert!(!ptr.is_null());
-	unsafe {
-		let addr =
-			HEAP_START + (ptr as usize - ALLOC_START) / PAGE_SIZE;
+		uint64_t addr = HEAP_START + (uint64_t)(ptr - ALLOC_START) / PAGE_SIZE;
 		// Make sure that the address makes sense. The address we
 		// calculate here is the page structure, not the HEAP address!
-		assert!(addr >= HEAP_START && addr < HEAP_START + HEAP_SIZE);
-		let mut p = addr as *mut Page;
+		page* p = (page*)addr;
 		// Keep clearing pages until we hit the last page.
-		while (*p).is_taken() && !(*p).is_last() {
-			(*p).clear();
-			p = p.add(1);
+		while (is_taken(*p) && !is_last(*p)) {
+			clear(p);
+			p = p+1;
 		}
 		// If the following assertion fails, it is most likely
 		// caused by a double-free.
-		assert!(
-		        (*p).is_last() == true,
-		        "Possible double-free detected! (Not taken found \
-		         before last)"
-		);
 		// If we get here, we've taken care of all previous pages and
 		// we are on the last page.
-		(*p).clear();
-	}
+		clear(p);
 }
 
 /// Print all page allocations
 /// This is mainly used for debugging.
-pub fn print_page_allocations() {
-	unsafe {
-		let num_pages = HEAP_SIZE / PAGE_SIZE;
-		let mut beg = HEAP_START as *const Page;
-		let end = beg.add(num_pages);
-		let alloc_beg = ALLOC_START;
-		let alloc_end = ALLOC_START + num_pages * PAGE_SIZE;
-		println!();
-		println!(
-		         "PAGE ALLOCATION TABLE\nMETA: {:p} -> {:p}\nPHYS: \
-		          0x{:x} -> 0x{:x}",
-		         beg, end, alloc_beg, alloc_end
-		);
-		println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-		let mut num = 0;
-		while beg < end {
-			if (*beg).is_taken() {
-				let start = beg as usize;
-				let memaddr = ALLOC_START
-				              + (start - HEAP_START)
-				                * PAGE_SIZE;
-				print!("0x{:x} => ", memaddr);
-				loop {
-					num += 1;
-					if (*beg).is_last() {
-						let end = beg as usize;
-						let memaddr = ALLOC_START
-						              + (end
-						                 - HEAP_START)
-						                * PAGE_SIZE
-						              + PAGE_SIZE - 1;
-						print!(
-						       "0x{:x}: {:>3} page(s)",
-						       memaddr,
-						       (end - start + 1)
-						);
-						println!(".");
-						break;
-					}
-					beg = beg.add(1);
-				}
-			}
-			beg = beg.add(1);
-		}
-		println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-		println!(
-		         "Allocated: {:>5} pages ({:>9} bytes).",
-		         num,
-		         num * PAGE_SIZE
-		);
-		println!(
-		         "Free     : {:>5} pages ({:>9} bytes).",
-		         num_pages - num,
-		         (num_pages - num) * PAGE_SIZE
-		);
-		println!();
-	}
-}
+// pub fn print_page_allocations() {
+// 	unsafe {
+// 		let num_pages = HEAP_SIZE / PAGE_SIZE;
+// 		let mut beg = HEAP_START as *const Page;
+// 		let end = beg.add(num_pages);
+// 		let alloc_beg = ALLOC_START;
+// 		let alloc_end = ALLOC_START + num_pages * PAGE_SIZE;
+// 		println!();
+// 		println!(
+// 		         "PAGE ALLOCATION TABLE\nMETA: {:p} -> {:p}\nPHYS: \
+// 		          0x{:x} -> 0x{:x}",
+// 		         beg, end, alloc_beg, alloc_end
+// 		);
+// 		println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+// 		let mut num = 0;
+// 		while beg < end {
+// 			if (*beg).is_taken() {
+// 				let start = beg as usize;
+// 				let memaddr = ALLOC_START
+// 				              + (start - HEAP_START)
+// 				                * PAGE_SIZE;
+// 				print!("0x{:x} => ", memaddr);
+// 				loop {
+// 					num += 1;
+// 					if (*beg).is_last() {
+// 						let end = beg as usize;
+// 						let memaddr = ALLOC_START
+// 						              + (end
+// 						                 - HEAP_START)
+// 						                * PAGE_SIZE
+// 						              + PAGE_SIZE - 1;
+// 						print!(
+// 						       "0x{:x}: {:>3} page(s)",
+// 						       memaddr,
+// 						       (end - start + 1)
+// 						);
+// 						println!(".");
+// 						break;
+// 					}
+// 					beg = beg.add(1);
+// 				}
+// 			}
+// 			beg = beg.add(1);
+// 		}
+// 		println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+// 		println!(
+// 		         "Allocated: {:>5} pages ({:>9} bytes).",
+// 		         num,
+// 		         num * PAGE_SIZE
+// 		);
+// 		println!(
+// 		         "Free     : {:>5} pages ({:>9} bytes).",
+// 		         num_pages - num,
+// 		         (num_pages - num) * PAGE_SIZE
+// 		);
+// 		println!();
+// 	}
+// }

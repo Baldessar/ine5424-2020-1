@@ -62,6 +62,8 @@ void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, uint64_t level
     entry* v = t->entries[vpn[2]];
     for (int i = 1; i>=level; i--){
         if (!entry_is_valid(v)){
+            char* page = zalloc(1);
+            v->page_entry = ((uint64_t)page >> 2) | VALID;
             //alloca a pagina page = zalloc(1)
             //seta a pagina nas entries com os bits de valido com 1 v->page_entry = (page>>2) | VALID
         }
@@ -91,10 +93,10 @@ void unmap(table* t){
             entry* entry_lv1 = table_lv1->entries[lv1];
             if (entry_is_valid(entry_lv1) && entry_is_branch(entry_lv2)){
                 uint64_t memaddr_lv0 = (entry_lv1->page_entry & !0x3ff) << 2;
-                //dealloc((char*) memaddr_lv0);
+                dealloc((char*) memaddr_lv0);
             }
         }
-        //dealloc((char*) memaddr_lv1);
+        dealloc((char*) memaddr_lv1);
         }
     }
 }
@@ -132,8 +134,8 @@ void id_map_range(table* root,
 	uint64_t end,
     int64_t bits)
 {
-	uint64_t* memaddr = start & !(PAGE_SIZE - 1);
-	uint64_t num_kb_pages = (align_val(end, 12) - *memaddr)/ PAGE_SIZE;
+	uint64_t memaddr = start & !(PAGE_SIZE - 1);
+	uint64_t num_kb_pages = (align_val(end, 12) - memaddr)/ PAGE_SIZE;
 
 	// I named this num_kb_pages for future expansion when
 	// I decide to allow for GiB (2^30) and 2MiB (2^21) page
