@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <stdbool.h>
+
 #define VALID 1 << 0
 #define	READ 1 << 1
 #define	WRITE 1 << 2
@@ -13,19 +15,19 @@ typedef struct {
 } entry;
 
 typedef struct {
-    entry entries[512] ;
+    entry* entries[512] ;
 } table;
 
-bool entry_is_valid(entry e){
-    return e.page_entry & VALID ;
+bool entry_is_valid(entry* e){
+    return e->page_entry & VALID ;
 }
-bool entry_is_invalid(entry e){
+bool entry_is_invalid(entry* e){
     return !entry_is_valid(e);
 }
-bool entry_is_leaf(entry e){
-    return (e.page_entry & 0xe) !=0;
+bool entry_is_leaf(entry* e){
+    return (e->page_entry & 0xe) !=0;
 }
-bool entry_is_branch(entry e){
+bool entry_is_branch(entry* e){
     return !entry_is_leaf(e);
 }
 
@@ -47,7 +49,7 @@ void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, uint64_t level
 	// numbers (PPN). However, PPN[2] is different in that it stores
 	// 26 bits instead of 9. Therefore, we use,
 	// 0x3ff_ffff = 0b11_1111_1111_1111_1111_1111_1111 (26 bits).
-	uint64_t ppn[] = { 
+	uint64_t ppn[] = {
 				// PPN[0] = paddr[20:12]
 				(paddr >> 12) & 0x1ff,
 				// PPN[1] = paddr[29:21]
@@ -58,7 +60,7 @@ void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, uint64_t level
 
     entry* v = &t->entries[vpn[2]];
     for (int i = 1; i>=level; i--){
-        if (!entry_is_valid(*v)){
+        if (!entry_is_valid(v)){
             //alloca a pagina page = zalloc(1)
             //seta a pagina nas entries com os bits de valido com 1 v->page_entry = (page>>2) | VALID
         }
@@ -78,19 +80,21 @@ void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, uint64_t level
 void unmap(table* t){
     for (int lv2 = 0; lv2 < table_len(t); lv2++){
 
-        entry entry_lv2 = t->entries[lv2];
+        entry* entry_lv2 = t->entries[lv2];
         if (entry_is_valid(entry_lv2) && entry_is_branch(entry_lv2)){
-            uint64_t memaddr_lv1 = (entry_lv2.page_entry & !0x3ff) << 2;
+            uint64_t memaddr_lv1 = (entry_lv2->page_entry & !0x3ff) << 2;
             table* table_lv1 =(table*) memaddr_lv1;
-        }
+
+
         for (int lv1 = 0; lv1 < table_len(table_lv1); lv1++){
-            entry entry_lv1= table_lv1->entries[lv1];
+            entry* entry_lv1 = table_lv1->entries[lv1];
             if (entry_is_valid(entry_lv1) && entry_is_branch(entry_lv2)){
-                uint64_t memaddr_lv0 = (entry_lv1.page_entry & !0x3ff) << 2;
+                uint64_t memaddr_lv0 = (entry_lv1->page_entry & !0x3ff) << 2;
                 //dealloc((char*) memaddr_lv0);
             }
         }
         //dealloc((char*) memaddr_lv1);
+        }
     }
 }
 
@@ -107,12 +111,12 @@ uint64_t virt_to_phys(table* t, uint64_t vaddr){
 
     entry* v = t->entries[vpn[2]];
     for (int i = 0; i >= 2; i--) {
-        if (entry_is_invalid(v*)){
+        if (entry_is_invalid(v)){
             break;
-        }else if(entry_is_leaf(v*)){
+        }else if(entry_is_leaf(v)){
             uint64_t off_mask = (1 << (12 + i * 9)) - 1;
             uint64_t vaddr_pgoff = vaddr & off_mask;
-			uint64_t addr = ((v->page_entry << 2) as uint64_t) & !off_mask;
+			uint64_t addr = (v->page_entry << 2) & !off_mask;
 			return addr | vaddr_pgoff;
         }
         //let entry = ((v.get_entry() & !0x3ff) << 2) as *const Entry;
