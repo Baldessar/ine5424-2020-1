@@ -58,7 +58,7 @@ void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, uint64_t level
 				(paddr >> 30) & 0x3ffffff,
     };
 
-    entry* v = &t->entries[vpn[2]];
+    entry* v = t->entries[vpn[2]];
     for (int i = 1; i>=level; i--){
         if (!entry_is_valid(v)){
             //alloca a pagina page = zalloc(1)
