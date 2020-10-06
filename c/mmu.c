@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include "mem.c" 
 
 #define VALID 1 << 0
 #define	READ 1 << 1
@@ -64,7 +65,7 @@ void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, uint64_t level
             //alloca a pagina page = zalloc(1)
             //seta a pagina nas entries com os bits de valido com 1 v->page_entry = (page>>2) | VALID
         }
-        //v = &t->entries[vpn[i]]; REFAZ ESSAS PARADA
+        v = (entry*) (((v->page_entry & !0x3ff) << 2) + vpn[i]); //proximo nivel
     }
 
     uint64_t entry = (ppn[2] << 28) |   // PPN[2] = [53:28]
@@ -119,11 +120,29 @@ uint64_t virt_to_phys(table* t, uint64_t vaddr){
 			uint64_t addr = (v->page_entry << 2) & !off_mask;
 			return addr | vaddr_pgoff;
         }
-        //let entry = ((v.get_entry() & !0x3ff) << 2) as *const Entry;
-		// We do i - 1 here, however we should get None or Some() above
-		// before we do 0 - 1 = -1.
-		//v = unsafe { entry.add(vpn[i - 1]).as_ref().unwrap() };
+        v = (entry*) (((v->page_entry & !0x3ff) << 2) + vpn[i-1]); //proximo nivel
     }
     return 0;
 
 }
+
+
+void id_map_range(table* root,
+	uint64_t start,
+	uint64_t end,
+    int64_t bits)
+{
+	uint64_t* memaddr = start & !(PAGE_SIZE - 1);
+	uint64_t num_kb_pages = (align_val(end, 12) - *memaddr)/ PAGE_SIZE;
+
+	// I named this num_kb_pages for future expansion when
+	// I decide to allow for GiB (2^30) and 2MiB (2^21) page
+	// sizes. However, the overlapping memory regions are causing
+	// nightmares.
+	for (int i = 0; i<num_kb_pages; i++){
+        map(root, memaddr, memaddr, bits, 0);
+        memaddr += 1 << 12;
+	}
+}
+
+
