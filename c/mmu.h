@@ -1,6 +1,8 @@
+#ifndef MMU
+#define MMU
 #include <stdint.h>
 #include <stdbool.h>
-#include "mem.c" 
+#include "mem.h"
 
 #define VALID 1 << 0
 #define	READ 1 << 1
@@ -146,5 +148,4 @@ void id_map_range(table* root,
         memaddr += 1 << 12;
 	}
 }
-
-
+#endif

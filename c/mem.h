@@ -1,3 +1,5 @@
+#ifndef MEM
+#define MEM
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -262,3 +264,4 @@ void dealloc(char* ptr) {
 // 		println!();
 // 	}
 // }
+#endif

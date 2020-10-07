@@ -1,9 +1,9 @@
 
-#include "c/mmu.c"
-
+#include "c/mmu.h"
+#include "c/mem.h"
 
 int main() {
-    asm volatile("addi t4, x0, 1");
+    table *root = (table*) malloc(sizeof(table));
 
     return 0;
 }
