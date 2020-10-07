@@ -85,24 +85,24 @@ void clear_flag(page* p, char flag) {
 /// allocation) 2. Bookkeeping list (structure contains a taken and length)
 /// 3. Allocate one Page structure per 4096 bytes (this is what I chose)
 /// 4. Others
-void init() {
+void mem_init() {
 		uint64_t num_pages = HEAP_SIZE / PAGE_SIZE;
 		page* ptr = (page*) HEAP_START;
 		// Clear all pages to make sure that they aren't accidentally
 		// taken
-		for (int i = 0; i<num_pages; i++){
-			clear(ptr+i);
-		}
-		// Determine where the actual useful memory starts. This will be
-		// after all Page structures. We also must align the ALLOC_START
-		// to a page-boundary (PAGE_SIZE = 4096). ALLOC_START =
-		// (HEAP_START + num_pages * size_of::<Page>() + PAGE_SIZE - 1)
-		// & !(PAGE_SIZE - 1);
-		ALLOC_START = align_val(
-		                        HEAP_START
-		                        + num_pages * sizeof(page),
-		                        PAGE_ORDER
-		);
+		// for (int i = 0; i<num_pages; i++){
+		// 	clear(ptr+i);
+		// }
+		// // Determine where the actual useful memory starts. This will be
+		// // after all Page structures. We also must align the ALLOC_START
+		// // to a page-boundary (PAGE_SIZE = 4096). ALLOC_START =
+		// // (HEAP_START + num_pages * size_of::<Page>() + PAGE_SIZE - 1)
+		// // & !(PAGE_SIZE - 1);
+		// ALLOC_START = align_val(
+		//                         HEAP_START
+		//                         + num_pages * sizeof(page),
+		//                         PAGE_ORDER
+		// );
 }
 
 /// Allocate a page or multiple pages
@@ -156,7 +156,7 @@ char* alloc(uint64_t pages){
 
 	// If we get here, that means that no contiguous allocation was
 	// found.
-	//null_mut();
+	return NULL;
 }
 
 /// Allocate and zero a page or multiple pages
