@@ -37,4 +37,8 @@ KERNEL_STACK_END: .dword _stack_end
 
 .section .data
 .global KERNEL_TABLE
+<<<<<<< HEAD
 KERNEL_TABLE: .dword 0
+=======
+KERNEL_TABLE: .dword 0
+>>>>>>> 1136f4888cf7bc23dcbdbeec5ca209ff0beabca2
