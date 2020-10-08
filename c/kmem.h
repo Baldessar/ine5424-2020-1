@@ -43,12 +43,12 @@ uint64_t get_size(alloc_list alist){
 
 // This is the head of the allocation. We start here when
 // we search for a free memory location.
-static alloc_list*  KMEM_HEAD = NULL;
+extern alloc_list*  KMEM_HEAD = NULL;
 // In the future, we will have on-demand pages
 // so, we need to keep track of our memory footprint to
 // see if we actually need to allocate more.
-static uint64_t KMEM_ALLOC = 0;
-static table* KMEM_PAGE_TABLE = NULL;
+extern uint64_t KMEM_ALLOC = 0;
+extern table* KMEM_PAGE_TABLE = NULL;
 
 
 // These functions are safe helpers around an unsafe
@@ -72,11 +72,14 @@ uint64_t get_num_allocations(){
 void kmem_init() {
 		// Allocate 64 kernel pages (64 * 4096 = 262 KiB)
     char* k_alloc = zalloc(64);
+    
     KMEM_ALLOC = 64;
     KMEM_HEAD = (alloc_list*)k_alloc;
     set_free(KMEM_HEAD);
     set_size(KMEM_HEAD, KMEM_ALLOC * PAGE_SIZE);
     KMEM_PAGE_TABLE = (table*) zalloc(1);
+
+    asm volatile("addi t5, x0, 1");
 }
 
 char* kmalloc(uint64_t sz){

@@ -37,9 +37,22 @@ KERNEL_STACK_START: .dword _stack_start
 .global KERNEL_STACK_END
 KERNEL_STACK_END: .dword _stack_end
 
-.section .data
-.global KERNEL_TABLE
-KERNEL_TABLE: .dword 0
+.global KMEM_ALLOC
+KMEM_ALLOC: .dword 0
+
+.global KMEM_HEAD
+KMEM_HEAD: .dword 0
 
 .global ALLOC_START
 ALLOC_START: .dword 0
+
+.global KMEM_PAGE_TABLE
+KMEM_PAGE_TABLE: .dword 0
+
+.section .data
+
+.global KERNEL_TABLE
+KERNEL_TABLE: .dword 0
+
+
+
