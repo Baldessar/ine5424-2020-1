@@ -29,6 +29,8 @@ BSS_START: .dword _bss_start
 .global BSS_END
 BSS_END: .dword _bss_end
 
+
+
 .global KERNEL_STACK_START
 KERNEL_STACK_START: .dword _stack_start
 
@@ -38,3 +40,6 @@ KERNEL_STACK_END: .dword _stack_end
 .section .data
 .global KERNEL_TABLE
 KERNEL_TABLE: .dword 0
+
+.global ALLOC_START
+ALLOC_START: .dword 0

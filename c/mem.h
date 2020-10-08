@@ -7,6 +7,7 @@
 
     extern uint64_t HEAP_START;
     extern uint64_t HEAP_SIZE;
+    extern uint64_t ALLOC_START;
 
 
 uint64_t align_val(uint64_t val, uint64_t order){
@@ -16,7 +17,7 @@ uint64_t align_val(uint64_t val, uint64_t order){
 
 // We will use ALLOC_START to mark the start of the actual
 // memory we can dish out.
-static uint64_t ALLOC_START = 0;
+
 const uint64_t PAGE_ORDER = 12;
 
 /// Align (set to a multiple of some power of two)

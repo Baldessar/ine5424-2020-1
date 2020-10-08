@@ -29,7 +29,9 @@ run: all
 debug: all
 	$(QEMU) -machine $(MACH) -cpu $(CPU) -smp $(CPUS) -m $(MEM) -serial mon:stdio -kernel $(OUT) -S -s -nographic
 
-
+debugger:
+	riscv64-unknown-elf-objdump -d main.elf > obj.s
+	riscv64-unknown-elf-gdb main.elf  
 clean:
 	rm *.o
 	rm *.bin
