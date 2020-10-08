@@ -16,7 +16,7 @@ QEMU=qemu-system-riscv64
 MACH=virt
 CPU=rv64gcsu-v1.10.0
 
-CPUS=4
+CPUS=1
 MEM=128M
 all:
 	$(CC) $(CFLAGS) $(LINKER_SCRIPT) $(INCLUDES) -o $(OUT) $(SOURCES_ASM) main.c $(LIBS) $(LIB)
@@ -25,6 +25,9 @@ viewer: run
 
 run: all
 	$(QEMU) -machine $(MACH) -cpu $(CPU) -smp $(CPUS) -m $(MEM) -serial mon:stdio -kernel $(OUT)
+
+debug: all
+	$(QEMU) -machine $(MACH) -cpu $(CPU) -smp $(CPUS) -m $(MEM) -serial mon:stdio -kernel $(OUT) -S -s -nographic
 
 
 clean:
