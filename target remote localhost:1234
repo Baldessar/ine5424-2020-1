@@ -1,0 +1,14 @@
+target remote localhost:1234
+
+b mem_init
+b mem.h:123
+b mem.h:117
+b mem.h:101
+b mem.h:144
+
+b kmem.h:75
+
+b kinit
+b zalloc
+b alloc
+b asm_trap_vector

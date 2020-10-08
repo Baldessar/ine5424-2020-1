@@ -19,7 +19,7 @@ CPU=rv64gcsu-v1.10.0
 CPUS=1
 MEM=128M
 all:
-	$(CC) $(CFLAGS) $(LINKER_SCRIPT) $(INCLUDES) -o $(OUT) $(SOURCES_ASM) main.c $(LIBS) $(LIB)
+	$(CC) $(CFLAGS) $(LINKER_SCRIPT) $(INCLUDES) -o $(OUT) $(SOURCES_ASM) main.c $(LIBS) $(LIB) -w
 viewer: run
 	vncviewer 127.0.0.1:5901
 
@@ -31,7 +31,7 @@ debug: all
 
 debugger:
 	riscv64-unknown-elf-objdump -d main.elf > obj.s
-	riscv64-unknown-elf-gdb main.elf  
+	riscv64-unknown-elf-gdb main.elf
 clean:
 	rm *.o
 	rm *.bin

@@ -30,7 +30,7 @@ void set_free(alloc_list* alist) {
 
 void set_size(alloc_list* alist, uint64_t sz) {
     bool k = is_taken(*alist);
-    alist->flags_size = sz & !TAKEN;
+    alist->flags_size = sz & ~TAKEN;
     if (k) {
         alist->flags_size |= TAKEN;
     }
@@ -43,12 +43,12 @@ uint64_t get_size(alloc_list alist){
 
 // This is the head of the allocation. We start here when
 // we search for a free memory location.
-extern alloc_list*  KMEM_HEAD = NULL;
+extern alloc_list*  KMEM_HEAD;
 // In the future, we will have on-demand pages
 // so, we need to keep track of our memory footprint to
 // see if we actually need to allocate more.
-extern uint64_t KMEM_ALLOC = 0;
-extern table* KMEM_PAGE_TABLE = NULL;
+extern uint64_t KMEM_ALLOC;
+extern table* KMEM_PAGE_TABLE;
 
 
 // These functions are safe helpers around an unsafe
@@ -72,7 +72,7 @@ uint64_t get_num_allocations(){
 void kmem_init() {
 		// Allocate 64 kernel pages (64 * 4096 = 262 KiB)
     char* k_alloc = zalloc(64);
-    
+
     KMEM_ALLOC = 64;
     KMEM_HEAD = (alloc_list*)k_alloc;
     set_free(KMEM_HEAD);

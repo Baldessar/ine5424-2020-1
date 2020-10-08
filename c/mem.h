@@ -7,6 +7,17 @@
 
     extern uint64_t HEAP_START;
     extern uint64_t HEAP_SIZE;
+    extern uint64_t TEXT_START;
+    extern uint64_t TEXT_END;
+    extern uint64_t DATA_START;
+    extern uint64_t DATA_END;
+    extern uint64_t RODATA_START;
+    extern uint64_t RODATA_END;
+    extern uint64_t BSS_START;
+    extern uint64_t BSS_END;
+    extern uint64_t KERNEL_STACK_START;
+    extern uint64_t KERNEL_STACK_END;
+
     extern uint64_t ALLOC_START;
 
 
@@ -86,7 +97,7 @@ void clear_flag(page* p, char flag) {
 /// allocation) 2. Bookkeeping list (structure contains a taken and length)
 /// 3. Allocate one Page structure per 4096 bytes (this is what I chose)
 /// 4. Others
-void mem_init() {
+void page_init() {
 		uint64_t num_pages = HEAP_SIZE / PAGE_SIZE;
 		page* ptr = (page*) HEAP_START;
 		// Clear all pages to make sure that they aren't accidentally

@@ -18,7 +18,7 @@ typedef struct {
 } entry;
 
 typedef struct {
-    entry* entries[512] ;
+    entry entries[512] ;
 } table;
 
 bool entry_is_valid(entry* e){
@@ -38,7 +38,7 @@ int64_t table_len(table* t){
     return sizeof(*t);
 }
 
-void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, uint64_t level ){
+void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, int level ){
     uint64_t vpn[] = {
 				// VPN[0] = vaddr[20:12]
 				(vaddr >> 12) & 0x1ff,
@@ -61,7 +61,7 @@ void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, uint64_t level
 				(paddr >> 30) & 0x3ffffff,
     };
 
-    entry* v = t->entries[vpn[2]];
+    entry* v = &t->entries[vpn[2]];
     for (int i = 1; i>=level; i--){
         if (!entry_is_valid(v)){
             char* page = zalloc(1);
@@ -85,14 +85,14 @@ void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, uint64_t level
 void unmap(table* t){
     for (int lv2 = 0; lv2 < table_len(t); lv2++){
 
-        entry* entry_lv2 = t->entries[lv2];
+        entry* entry_lv2 = &t->entries[lv2];
         if (entry_is_valid(entry_lv2) && entry_is_branch(entry_lv2)){
             uint64_t memaddr_lv1 = (entry_lv2->page_entry & ~0x3ff) << 2;
             table* table_lv1 =(table*) memaddr_lv1;
 
 
         for (int lv1 = 0; lv1 < table_len(table_lv1); lv1++){
-            entry* entry_lv1 = table_lv1->entries[lv1];
+            entry* entry_lv1 = &table_lv1->entries[lv1];
             if (entry_is_valid(entry_lv1) && entry_is_branch(entry_lv2)){
                 uint64_t memaddr_lv0 = (entry_lv1->page_entry & ~0x3ff) << 2;
                 dealloc((char*) memaddr_lv0);
@@ -114,7 +114,7 @@ uint64_t virt_to_phys(table* t, uint64_t vaddr){
 				(vaddr >> 30) & 0x1ff,
     };
 
-    entry* v = t->entries[vpn[2]];
+    entry* v = &t->entries[vpn[2]];
     for (int i = 0; i >= 2; i--) {
         if (entry_is_invalid(v)){
             break;
