@@ -69,7 +69,7 @@ void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, uint64_t level
             //alloca a pagina page = zalloc(1)
             //seta a pagina nas entries com os bits de valido com 1 v->page_entry = (page>>2) | VALID
         }
-        v = (entry*) (((v->page_entry & !0x3ff) << 2) + vpn[i]); //proximo nivel
+        v = (entry*) (((v->page_entry & ~0x3ff) << 2) + vpn[i]); //proximo nivel
     }
 
     uint64_t entry = (ppn[2] << 28) |   // PPN[2] = [53:28]
@@ -87,14 +87,14 @@ void unmap(table* t){
 
         entry* entry_lv2 = t->entries[lv2];
         if (entry_is_valid(entry_lv2) && entry_is_branch(entry_lv2)){
-            uint64_t memaddr_lv1 = (entry_lv2->page_entry & !0x3ff) << 2;
+            uint64_t memaddr_lv1 = (entry_lv2->page_entry & ~0x3ff) << 2;
             table* table_lv1 =(table*) memaddr_lv1;
 
 
         for (int lv1 = 0; lv1 < table_len(table_lv1); lv1++){
             entry* entry_lv1 = table_lv1->entries[lv1];
             if (entry_is_valid(entry_lv1) && entry_is_branch(entry_lv2)){
-                uint64_t memaddr_lv0 = (entry_lv1->page_entry & !0x3ff) << 2;
+                uint64_t memaddr_lv0 = (entry_lv1->page_entry & ~0x3ff) << 2;
                 dealloc((char*) memaddr_lv0);
             }
         }
@@ -121,10 +121,10 @@ uint64_t virt_to_phys(table* t, uint64_t vaddr){
         }else if(entry_is_leaf(v)){
             uint64_t off_mask = (1 << (12 + i * 9)) - 1;
             uint64_t vaddr_pgoff = vaddr & off_mask;
-			uint64_t addr = (v->page_entry << 2) & !off_mask;
+			uint64_t addr = (v->page_entry << 2) & ~off_mask;
 			return addr | vaddr_pgoff;
         }
-        v = (entry*) (((v->page_entry & !0x3ff) << 2) + vpn[i-1]); //proximo nivel
+        v = (entry*) (((v->page_entry & ~0x3ff) << 2) + vpn[i-1]); //proximo nivel
     }
     return 0;
 
@@ -136,7 +136,7 @@ void id_map_range(table* root,
 	uint64_t end,
     int64_t bits)
 {
-	uint64_t memaddr = start & !(PAGE_SIZE - 1);
+	uint64_t memaddr = start & ~(PAGE_SIZE - 1);
 	uint64_t num_kb_pages = (align_val(end, 12) - memaddr)/ PAGE_SIZE;
 
 	// I named this num_kb_pages for future expansion when

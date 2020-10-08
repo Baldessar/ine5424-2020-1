@@ -3,15 +3,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#define PAGE_SIZE 1<<12
+#define PAGE_SIZE 4096
 
-static uint64_t HEAP_START;
-static uint64_t HEAP_SIZE;
+    extern uint64_t HEAP_START;
+    extern uint64_t HEAP_SIZE;
 
 
 uint64_t align_val(uint64_t val, uint64_t order){
 	uint64_t o = (1 << order) - 1;
-	return(val + o) & !o;
+	return(val + o) & ~o;
 }
 
 // We will use ALLOC_START to mark the start of the actual
@@ -90,19 +90,15 @@ void mem_init() {
 		page* ptr = (page*) HEAP_START;
 		// Clear all pages to make sure that they aren't accidentally
 		// taken
-		// for (int i = 0; i<num_pages; i++){
-		// 	clear(ptr+i);
-		// }
+		for (int i = 0; i<num_pages; i++){
+			clear(ptr+i);
+		}
 		// // Determine where the actual useful memory starts. This will be
 		// // after all Page structures. We also must align the ALLOC_START
 		// // to a page-boundary (PAGE_SIZE = 4096). ALLOC_START =
 		// // (HEAP_START + num_pages * size_of::<Page>() + PAGE_SIZE - 1)
 		// // & !(PAGE_SIZE - 1);
-		// ALLOC_START = align_val(
-		//                         HEAP_START
-		//                         + num_pages * sizeof(page),
-		//                         PAGE_ORDER
-		// );
+		ALLOC_START = align_val(HEAP_START + num_pages * sizeof(page), PAGE_ORDER);
 }
 
 /// Allocate a page or multiple pages
@@ -121,7 +117,7 @@ char* alloc(uint64_t pages){
         if (is_free(*(ptr+i))) {
             // It was FREE! Yay!
             found = true;
-            for (int j=i; j< (i+pages); i++) {
+            for (int j=i; j < (i+pages); j++) {
                 // Now check to see if we have a
                 // contiguous allocation for all of the
                 // request pages. If not, we should
