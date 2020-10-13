@@ -13,7 +13,7 @@ LIB= -lgcc
 ## QEMU
 #####
 QEMU=qemu-system-riscv64
-MACH=virt
+MACH=sifive_u
 CPU=rv64gcsu-v1.10.0
 
 CPUS=1

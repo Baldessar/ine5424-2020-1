@@ -31,6 +31,7 @@ extern "C" {
     }
 
     int kmain() {
+        uint64_t x = virt_to_phys((table*)KERNEL_TABLE, HEAP_START);
         return 0;
     }
 }

@@ -69,7 +69,7 @@ void map(table* t, uint64_t paddr, uint64_t vaddr, uint64_t bits, int level ){
             //alloca a pagina page = zalloc(1)
             //seta a pagina nas entries com os bits de valido com 1 v->page_entry = (page>>2) | VALID
         }
-        v = (entry*) (((v->page_entry & ~0x3ff) << 2) + vpn[i]); //proximo nivel
+        v = (entry*) (((v->page_entry & ~0x3ff) << 2) + vpn[i]*sizeof(entry)); //proximo nivel
     }
 
     uint64_t entry = (ppn[2] << 28) |   // PPN[2] = [53:28]
@@ -115,7 +115,7 @@ uint64_t virt_to_phys(table* t, uint64_t vaddr){
     };
 
     entry* v = &t->entries[vpn[2]];
-    for (int i = 0; i >= 2; i--) {
+    for (int i = 2; i >= 0; i--) {
         if (entry_is_invalid(v)){
             break;
         }else if(entry_is_leaf(v)){
@@ -124,7 +124,7 @@ uint64_t virt_to_phys(table* t, uint64_t vaddr){
 			uint64_t addr = (v->page_entry << 2) & ~off_mask;
 			return addr | vaddr_pgoff;
         }
-        v = (entry*) (((v->page_entry & ~0x3ff) << 2) + vpn[i-1]); //proximo nivel
+        v = (entry*) (((v->page_entry & ~0x3ff) << 2) + vpn[i-1]*sizeof(entry)); //proximo nivel
     }
     return 0;
 
@@ -138,11 +138,7 @@ void id_map_range(table* root,
 {
 	uint64_t memaddr = start & ~(PAGE_SIZE - 1);
 	uint64_t num_kb_pages = (align_val(end, 12) - memaddr)/ PAGE_SIZE;
-
-	// I named this num_kb_pages for future expansion when
-	// I decide to allow for GiB (2^30) and 2MiB (2^21) page
-	// sizes. However, the overlapping memory regions are causing
-	// nightmares.
+    
 	for (int i = 0; i<num_kb_pages; i++){
         map(root, memaddr, memaddr, bits, 0);
         memaddr += 1 << 12;
