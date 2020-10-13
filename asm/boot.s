@@ -70,10 +70,10 @@ _start:
 	# 1 << 1    : Supervisor's interrupt-enable bit will be set to 1 after sret.
 	# We set the "previous" bits because the sret will write the current bits
 	# with the previous bits.
-	li		t0, (1 << 8) | (1 << 5)
-	csrw	sstatus, t0
+	li		t0, (0b11 << 11) | (1 << 8) | (1 << 5) | (1 << 7)
+	csrw	mstatus, t0
 	la		t1, kmain
-	csrw	sepc, t1
+	csrw	mepc, t1
 	# Setting `mideleg` (machine interrupt delegate) register:
 	# 1 << 1   : Software interrupt delegated to supervisor mode
 	# 1 << 5   : Timer interrupt delegated to supervisor mode
@@ -89,13 +89,13 @@ _start:
 	# 1 << 1    : Supervisor software interrupt enable (SSIE=1 [Enabled])
 	# 1 << 5    : Supervisor timer interrupt enable (STIE=1 [Enabled])
 	# 1 << 9    : Supervisor external interrupt enable (SEIE=1 [Enabled])
-	csrw	sie, t2
+	csrw	mie, t2
 	# Setting `stvec` (supervisor trap vector) register:
 	# Essentially this is a function pointer, but the last two bits can be 00 or 01
 	# 00        : All exceptions set pc to BASE
 	# 01        : Asynchronous interrupts set pc to BASE + 4 x scause
 	la		t3, asm_trap_vector
-	csrw	stvec, t3
+	csrw	mtvec, t3
 	# kinit() is required to return back the SATP value (including MODE) via a0
 	csrw	satp, a0
 	# Force the CPU to take our SATP register.
@@ -105,7 +105,7 @@ _start:
 	# grabs a fresh copy of the SATP register and associated tables.
 	sfence.vma
 	# sret will put us in supervisor mode and re-enable interrupts
-	sret
+	mret
 3:
 
 	# Parked harts go here. We need to set these

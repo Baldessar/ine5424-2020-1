@@ -17,7 +17,7 @@ bool is_taken(alloc_list alist){
 }
 
 bool is_free(alloc_list alist){
-    return is_taken(alist);
+    return !is_taken(alist);
 }
 
 void set_taken(alloc_list* alist) {
