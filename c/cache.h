@@ -1,10 +1,12 @@
 #ifndef CACHE
 #define CACHE
 #include <stdint.h>
+#include "barrier.h"
 /* Register offsets */
 #define L2_CACHE_CONFIG	0x000
 #define L2_CACHE_ENABLE	0x008
-#define L2_LIM_BASE 0x8000000
+#define L2_LIM_BASE 0x2010000
+#define readl(a) (*(unsigned int*)(a))
 
 #define MASK_NUM_WAYS	0xff00 
 #define NUM_WAYS_SHIFT	8
@@ -12,20 +14,22 @@
 
 int cache_enable_ways(void)
 {
-	uint64_t base;
-	uint64_t config;
-	uint64_t ways;
+	unsigned int base;
+	unsigned int config;
+	unsigned int ways;
 
-	volatile uint64_t *enable;
+	volatile unsigned int *enable;
 
 	base = L2_LIM_BASE;
 
-	//config = *(( char *)base + L2_CACHE_CONFIG);
-	ways = (MASK_NUM_WAYS) >> NUM_WAYS_SHIFT;
+	// config = readl((unsigned int *)base + L2_CACHE_CONFIG);
+    config = 0x400;
+	ways = (config & MASK_NUM_WAYS) >> NUM_WAYS_SHIFT;
 
-	enable = (volatile uint64_t *)(base + L2_CACHE_ENABLE);
-
+	enable = (volatile unsigned int *)(base + L2_CACHE_ENABLE);
+    mb();
 	(*enable) = ways - 1;
+    mb();
 	return 0;
 }
 

@@ -13,21 +13,22 @@ LIB= -lgcc
 ## QEMU
 #####
 QEMU=qemu-system-riscv64
-MACH=sifive_u
-CPU=rv64gcsu-v1.10.0
+MACH=virt
+CPU=rv64
 
 CPUS=1
 MEM=128M
+QEMU_FLAGS= -bios none
 all:
 	$(CC) $(CFLAGS) $(LINKER_SCRIPT) $(INCLUDES) -o $(OUT) $(SOURCES_ASM) main.c $(LIBS) $(LIB) -w
 viewer: run
 	vncviewer 127.0.0.1:5901
 
 run: all
-	$(QEMU) -machine $(MACH) -cpu $(CPU) -smp $(CPUS) -m $(MEM) -serial mon:stdio -kernel $(OUT)
+	$(QEMU) -machine $(MACH) $(QEMU_FLAGS) -cpu $(CPU) -smp $(CPUS) -m $(MEM) -serial mon:stdio -kernel $(OUT)
 
 debug: all
-	$(QEMU) -machine $(MACH) -cpu $(CPU) -smp $(CPUS) -m $(MEM) -serial mon:stdio -kernel $(OUT) -S -s -nographic
+	$(QEMU) -machine $(MACH) $(QEMU_FLAGS) -cpu $(CPU) -smp $(CPUS) -m $(MEM) -serial mon:stdio -kernel $(OUT) -S -s -nographic
 
 debugger:
 	riscv64-unknown-elf-objdump -d main.elf > obj.s
