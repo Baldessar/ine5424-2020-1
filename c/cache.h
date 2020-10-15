@@ -4,7 +4,7 @@
 /* Register offsets */
 #define L2_CACHE_CONFIG	0x000
 #define L2_CACHE_ENABLE	0x008
-#define L2_LIM_BASE 0x0a000000
+#define L2_LIM_BASE 0x8000000
 
 #define MASK_NUM_WAYS	0xff00 
 #define NUM_WAYS_SHIFT	8

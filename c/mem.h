@@ -103,7 +103,7 @@ void page_init() {
 		// Clear all pages to make sure that they aren't accidentally
 		// taken
 		for (int i = 0; i<num_pages; i++){
-			clear(ptr+i);
+			clear(ptr+i*sizeof(page));
 		}
 		// // Determine where the actual useful memory starts. This will be
 		// // after all Page structures. We also must align the ALLOC_START
@@ -126,7 +126,7 @@ char* alloc(uint64_t pages){
         bool found = false;
         // Check to see if this Page is free. If so, we have our
         // first candidate memory address.
-        if (is_free(*(ptr+i))) {
+        if (is_free(*(ptr+i*sizeof(page)))) {
             // It was FREE! Yay!
             found = true;
             for (int j=i; j < (i+pages); j++) {
@@ -134,7 +134,7 @@ char* alloc(uint64_t pages){
                 // contiguous allocation for all of the
                 // request pages. If not, we should
                 // check somewhere else.
-                if (is_taken(*(ptr + j))) {
+                if (is_taken(*(ptr + j*sizeof(page)))) {
                     found = false;
                     break;
                 }
@@ -146,14 +146,14 @@ char* alloc(uint64_t pages){
         // we've found valid memory we can allocate.
         if (found) {
             for (int k = i; k<(i + pages - 1); k++) {
-                set_flag(ptr + k, taken);
+                set_flag(ptr + k*sizeof(page), taken);
             }
             // The marker for the last page is
             // PageBits::Last This lets us know when we've
             // hit the end of this particular allocation.
 
-            set_flag(ptr + i+pages-1, taken);
-            set_flag(ptr + i+pages-1, last);
+            set_flag(ptr + (i+pages-1)*sizeof(page), taken);
+            set_flag(ptr + (i+pages-1)*sizeof(page), last);
             // The Page structures themselves aren't the
             // useful memory. Instead, there is 1 Page
             // structure per 4096 bytes starting at
@@ -185,7 +185,7 @@ char* zalloc(uint64_t pages) {
 			// Typically we have to be concerned about remaining
 			// bytes, but fortunately 4096 % 8 = 0, so we
 			// won't have any remaining bytes.
-			*(big_ptr+i) = 0;
+			*(big_ptr+i*sizeof(uint64_t)) = 0;
 		}
 	}
 	return ret;
@@ -203,7 +203,7 @@ void dealloc(char* ptr) {
 		// Keep clearing pages until we hit the last page.
 		while (is_taken(*p) && !is_last(*p)) {
 			clear(p);
-			p = p+1;
+			p = p+1*sizeof(page);
 		}
 		// If the following assertion fails, it is most likely
 		// caused by a double-free.

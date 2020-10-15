@@ -12,12 +12,12 @@ typedef struct {
 	uint64_t flags_size;
 }alloc_list;
 
-bool is_taken(alloc_list alist){
+bool alist_is_taken(alloc_list alist){
     return alist.flags_size & TAKEN != 0;
 }
 
-bool is_free(alloc_list alist){
-    return !is_taken(alist);
+bool alist_is_free(alloc_list alist){
+    return !alist_is_taken(alist);
 }
 
 void set_taken(alloc_list* alist) {
@@ -29,7 +29,7 @@ void set_free(alloc_list* alist) {
 }
 
 void set_size(alloc_list* alist, uint64_t sz) {
-    bool k = is_taken(*alist);
+    bool k = alist_is_taken(*alist);
     alist->flags_size = sz & ~TAKEN;
     if (k) {
         alist->flags_size |= TAKEN;
@@ -91,7 +91,7 @@ char* kmalloc(uint64_t sz){
 		alloc_list* tail = (alloc_list*)(KMEM_HEAD + (KMEM_ALLOC * PAGE_SIZE));
 
 		while (head < tail) {
-			if (is_free(*head) && size <= get_size(*head)) {
+			if (alist_is_free(*head) && size <= get_size(*head)) {
 				uint64_t chunk_size = get_size(*head);
 				uint64_t rem = chunk_size - size;
 				set_taken(head);
@@ -105,12 +105,12 @@ char* kmalloc(uint64_t sz){
 					// If we get here, take the entire chunk
 					set_size(head,chunk_size);
 				}
-				return (char*) head+1;
+				return (char*) head+1*sizeof(char);
 			}
 			else {
 				// If we get here, what we saw wasn't a free
 				// chunk, move on to the next.
-				head = (alloc_list*) (head + (get_size(*head)));
+				head = (alloc_list*) (head + (get_size(*head)*sizeof(char)));
 			}
 		}
 	// If we get here, we didn't find any free chunks--i.e. there isn't
@@ -125,7 +125,7 @@ char* kzmalloc(uint64_t sz){
 
 	if (ret!=NULL) {
 		for (int i = 0; i< size; i++){
-			(*(ret+i)) = 0;
+			(*(ret+i*sizeof(char))) = 0;
 		}
 	}
 	return ret;
@@ -139,7 +139,7 @@ void coalesce() {
 		alloc_list* tail = (KMEM_HEAD+(KMEM_ALLOC * PAGE_SIZE));
 
 		while (head < tail) {
-			alloc_list* next = (head +(get_size(*head)));
+			alloc_list* next = (head +(get_size(*head)*sizeof(char)));
 			if (get_size(*head) == 0) {
 				// If this happens, then we have a bad heap
 				// (double free or something). However, that
@@ -156,7 +156,7 @@ void coalesce() {
 				// need to do.
 				break;
 			}
-			else if (is_free(*head) && is_free(*next)) {
+			else if (alist_is_free(*head) && alist_is_free(*next)) {
 				// This means we have adjacent blocks needing to
 				// be freed. So, we combine them into one
 				// allocation.
@@ -164,15 +164,15 @@ void coalesce() {
 			}
 			// If we get here, we might've moved. Recalculate new
 			// head.
-			head = (head + (get_size(*head)));
+			head = (head + (get_size(*head)*sizeof(char)));
 		}
 }
 
 /// Free a sub-page level allocation
 void kfree(char* ptr) {
     if (ptr != NULL) {
-        alloc_list* p = (alloc_list*)(ptr-1);
-        if (is_taken(*p)) {
+        alloc_list* p = (alloc_list*)(ptr-1*sizeof(alloc_list));
+        if (alist_is_taken(*p)) {
             set_free(p);
         }
         // After we free, see if we can combine adjacent free
@@ -195,7 +195,7 @@ void kfree(char* ptr) {
 // 			         "{:p}: Length = {:<10} Taken = {}",
 // 			         head,
 // 			         (*head).get_size(),
-// 			         (*head).is_taken()
+// 			         (*head).alist_is_taken()
 // 			);
 // 			head = (head as *mut u8).add((*head).get_size())
 // 			       as *mut AllocList;
