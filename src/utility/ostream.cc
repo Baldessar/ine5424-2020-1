@@ -85,16 +85,16 @@ int OStream::llutoa(unsigned long long int v, char * s, unsigned int i)
 
 int OStream::ptoa(const void * p, char * s)
 {
-    unsigned int j, v = reinterpret_cast<unsigned int>(p);
+    // unsigned int j, v = reinterpret_cast<unsigned int>(p);
 
-    s[0] = '0';
-    s[1] = 'x';
+    // s[0] = '0';
+    // s[1] = 'x';
 
-    for(j = 0; j < sizeof(void *) * 2; j++, v >>= 4)
-        s[2 + sizeof(void *) * 2 - 1 - j]
-            = _digits[v & 0xf];
+    // for(j = 0; j < sizeof(void *) * 2; j++, v >>= 4)
+    //     s[2 + sizeof(void *) * 2 - 1 - j]
+    //         = _digits[v & 0xf];
 
-    return j + 2;
+    return  2;
 }
 
 __END_UTIL

@@ -376,6 +376,6 @@ __END_SYS
 __BEGIN_UTIL
 unsigned int This_Thread::id()
 {
-    return _not_booting ? reinterpret_cast<volatile unsigned int>(Thread::self()) : CPU::id() + 1;
+    return _not_booting ? reinterpret_cast<volatile unsigned long>(Thread::self()) : CPU::id() + 1;
 }
 __END_UTIL

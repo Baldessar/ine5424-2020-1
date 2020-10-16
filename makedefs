@@ -88,6 +88,7 @@ UUID                    = $(shell cat /proc/sys/kernel/random/uuid | sed 's/-//g
 
 # Compiler prefixes
 ia32_COMP_PREFIX	:= /usr/bin/x86_64-linux-gnu-
+riscv_COMP_PREFIX	:= /opt/riscv/bin/riscv64-unknown-elf-
 armv7_COMP_PREFIX	:= /usr/bin/arm-none-eabi-
 armv8_COMP_PREFIX	:= /usr/bin/arm-none-eabi-
 COMP_PREFIX		= $($(ARCH)_COMP_PREFIX)
@@ -140,6 +141,19 @@ cortex_MAGIC		:= --omagic
 cortex_CODE_NAME	:= .init
 cortex_DATA_NAME	:=
 cortex_IMG_SUFFIX	:= .bin
+endif
+
+ifeq ($(MMOD),virt)
+cortex_EMULATOR		=  qemu-system-riscv64 -machine virt -m $(MEM_SIZE)k -serial mon:stdio -serial null -nographic -no-reboot -kernel 
+cortex_CC_FLAGS		:= -ffreestanding
+cortex_AS_FLAGS		:=
+cortex_LD_FLAGS		:=
+cortex_DEBUGGER		:= riscv64-unknown-linux-gnu-gdb 
+cortex_FLASHER		=
+cortex_MAGIC		:= --omagic
+cortex_CODE_NAME	:= .init
+cortex_DATA_NAME	:= .data
+cortex_IMG_SUFFIX	:= .img
 endif
 
 ifeq ($(MMOD),lm3s811)
