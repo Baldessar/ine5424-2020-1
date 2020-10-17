@@ -22,7 +22,7 @@ using namespace EPOS::S::U;
 
 // Constants
 const unsigned int TOKENS = 24;
-const unsigned int COMPONENTS = 2;
+const unsigned int COMPONENTS = 62;
 const unsigned int STRING_SIZE = 128;
 
 // Configuration tokens (integer tokens first, marked by INT_TOKENS)
@@ -59,67 +59,67 @@ char token_values[TOKENS][STRING_SIZE];
 // List of EPOS components. Changes here must be replicated at populate_strings()
 char components[COMPONENTS][STRING_SIZE] = {
     "CPU",
-    // "TSC",
-    // "MMU",
-    // "FPU",
-    // "PMU",
+    "TSC",
+    "MMU",
+    "FPU",
+    "PMU",
     "Machine",
-    // "PCI",
-    // "IC",
-    // "Timer",
-    // "RTC",
-    // "UART",
-    // "USB",
-    // "EEPROM",
-    // "Display",
-    // "Serial_Display",
-    // "Keyboard",
-    // "Serial_Keyboard",
-    // "Scratchpad",
-    // "GPIO",
-    // "I2C",
-    // "ADC",
-    // "FPGA",
-    // "NIC",
-    // "Ethernet",
-    // "IEEE802_15_4",
-    // "PCNet32",
-    // "RTL8139",
-    // "C905",
-    // "E100",
-    // "CC2538",
-    // "AT86RF",
-    // "Ethernet_NIC",
-    // "System",
-    // "Application",
-    // "Thread",
-    // "Active",
-    // "Periodic_Thread",
-    // "RT_Thread",
-    // "Task",
-    // "Scheduler",
-    // "Address_Space",
-    // "Segment",
-    // "Synchronizer",
-    // "Mutex",
-    // "Semaphore",
-    // "Condition",
-    // "Clock",
-    // "Chronometer",
-    // "Alarm",
-    // "Delay",
-    // "Network",
-    // "TSTP",
-    // "ARP",
-    // "IP",
-    // "ICMP",
-    // "UDP",
-    // "TCP",
-    // "DHCP",
-    // "IPC",
-    // "Link",
-    // "Port",
-    // "SmartData",
+    "PCI",
+    "IC",
+    "Timer",
+    "RTC",
+    "UART",
+    "USB",
+    "EEPROM",
+    "Display",
+    "Serial_Display",
+    "Keyboard",
+    "Serial_Keyboard",
+    "Scratchpad",
+    "GPIO",
+    "I2C",
+    "ADC",
+    "FPGA",
+    "NIC",
+    "Ethernet",
+    "IEEE802_15_4",
+    "PCNet32",
+    "RTL8139",
+    "C905",
+    "E100",
+    "CC2538",
+    "AT86RF",
+    "Ethernet_NIC",
+    "System",
+    "Application",
+    "Thread",
+    "Active",
+    "Periodic_Thread",
+    "RT_Thread",
+    "Task",
+    "Scheduler",
+    "Address_Space",
+    "Segment",
+    "Synchronizer",
+    "Mutex",
+    "Semaphore",
+    "Condition",
+    "Clock",
+    "Chronometer",
+    "Alarm",
+    "Delay",
+    "Network",
+    "TSTP",
+    "ARP",
+    "IP",
+    "ICMP",
+    "UDP",
+    "TCP",
+    "DHCP",
+    "IPC",
+    "Link",
+    "Port",
+    "SmartData",
 };
 
 // List of enabled components (populated at populate_strings())
@@ -283,9 +283,10 @@ void populate_strings()
     case Traits<Build>::ARMv4:          set_token_value("ARCH", "armv4");       break;
     case Traits<Build>::ARMv7:          set_token_value("ARCH", "armv7");       break;
     case Traits<Build>::ARMv8:          set_token_value("ARCH", "armv8");       break;
+    case Traits<Build>::RV32:           set_token_value("ARCH", "rv32");        break;
+    case Traits<Build>::RV64:           set_token_value("ARCH", "rv64");        break;
     case Traits<Build>::SPARCv8:        set_token_value("ARCH", "sparc8");      break;
     case Traits<Build>::PPC32:          set_token_value("ARCH", "ppc32");       break;
-    case Traits<Build>::RISCV:          set_token_value("ARCH", "riscv");       break;
     default:                            set_token_value("ARCH", "unsuported");  break;
     }
 
@@ -297,8 +298,8 @@ void populate_strings()
     case Traits<Build>::RCX:            set_token_value("MACH", "rcx");              break;
     case Traits<Build>::Leon:           set_token_value("MACH", "leon");             break;
     case Traits<Build>::Virtex:         set_token_value("MACH", "virtex");           break;
-    case Traits<Build>::Cortex:         set_token_value("MACH", "cortex");         break;
-    case Traits<Build>::Sifive:         set_token_value("MACH", "sifive");         break;
+    case Traits<Build>::Cortex:         set_token_value("MACH", "cortex");           break;
+    case Traits<Build>::RISCV:          set_token_value("MACH", "riscv");            break;
     default:                            set_token_value("MACH", "unsuported");       break;
     }
 
@@ -309,8 +310,9 @@ void populate_strings()
     case Traits<Build>::LM3S811:        set_token_value("MMOD", "lm3s811");            break;
     case Traits<Build>::Zynq:           set_token_value("MMOD", "zynq");               break;
     case Traits<Build>::Realview_PBX:   set_token_value("MMOD", "realview_pbx");       break;
-    case Traits<Build>::Raspberry_Pi3:  set_token_value("MMOD", "raspberry_pi3");       break;
-    case Traits<Build>::virt:           set_token_value("MMOD", "virt");       break;
+    case Traits<Build>::Raspberry_Pi3:  set_token_value("MMOD", "raspberry_pi3");     break;
+    case Traits<Build>::SiFive_E:       set_token_value("MMOD", "sifive_e");           break;
+    case Traits<Build>::SiFive_U:       set_token_value("MMOD", "sifive_u");           break;
     default:                            set_token_value("MMOD", "unsuported");         break;
     }
 
@@ -323,64 +325,64 @@ void populate_strings()
 
     // Enabled mediators
     if(Traits<CPU>::enabled)            enable_component("CPU");
-    // if(Traits<TSC>::enabled)            enable_component("TSC");
-    // if(Traits<MMU>::enabled)            enable_component("MMU");
-    // if(Traits<FPU>::enabled)            enable_component("FPU");
-    // if(Traits<PMU>::enabled)            enable_component("PMU");
-    // if(Traits<Machine>::enabled)        enable_component("Machine");
-    // if(Traits<PCI>::enabled)            enable_component("PCI");
-    // if(Traits<IC>::enabled)             enable_component("IC");
-    // if(Traits<Timer>::enabled)          enable_component("Timer");
-    // if(Traits<RTC>::enabled)            enable_component("RTC");
-    // if(Traits<UART>::enabled)           enable_component("UART");
-    // if(Traits<USB>::enabled)            enable_component("USB");
-    // if(Traits<EEPROM>::enabled)         enable_component("EEPROM");
-    // if(Traits<Display>::enabled)        enable_component("Display");
-    // if(Traits<Serial_Display>::enabled) enable_component("Serial_Display");
-    // if(Traits<Keyboard>::enabled)       enable_component("Keyboard");
-    // if(Traits<Serial_Keyboard>::enabled)enable_component("Serial_Keyboard");
-    // if(Traits<Scratchpad>::enabled)     enable_component("Scratchpad");
-    // if(Traits<GPIO>::enabled)           enable_component("GPIO");
-    // if(Traits<I2C>::enabled)            enable_component("I2C");
-    // if(Traits<ADC>::enabled)            enable_component("ADC");
-    // if(Traits<FPGA>::enabled)           enable_component("FPGA");
-    // if(Traits<Ethernet>::enabled)       enable_component("Ethernet");
-    // if(Traits<IEEE802_15_4>::enabled)   enable_component("IEEE802_15_4");
-    // if(Traits<PCNet32>::enabled)        enable_component("PCNet32");
-    // if(Traits<RTL8139>::enabled)        enable_component("RTL8139");
-    // if(Traits<C905>::enabled)           enable_component("C905");
-    // if(Traits<E100>::enabled)           enable_component("E100");
-    // if(Traits<IEEE802_15_4_NIC>::enabled)       enable_component("IEEE802_15_4_NIC");
-    // if(Traits<Ethernet_NIC>::enabled)   enable_component("Ethernet_NIC");
+    if(Traits<TSC>::enabled)            enable_component("TSC");
+    if(Traits<MMU>::enabled)            enable_component("MMU");
+    if(Traits<FPU>::enabled)            enable_component("FPU");
+    if(Traits<PMU>::enabled)            enable_component("PMU");
+    if(Traits<Machine>::enabled)        enable_component("Machine");
+    if(Traits<PCI>::enabled)            enable_component("PCI");
+    if(Traits<IC>::enabled)             enable_component("IC");
+    if(Traits<Timer>::enabled)          enable_component("Timer");
+    if(Traits<RTC>::enabled)            enable_component("RTC");
+    if(Traits<UART>::enabled)           enable_component("UART");
+    if(Traits<USB>::enabled)            enable_component("USB");
+    if(Traits<EEPROM>::enabled)         enable_component("EEPROM");
+    if(Traits<Display>::enabled)        enable_component("Display");
+    if(Traits<Serial_Display>::enabled) enable_component("Serial_Display");
+    if(Traits<Keyboard>::enabled)       enable_component("Keyboard");
+    if(Traits<Serial_Keyboard>::enabled)enable_component("Serial_Keyboard");
+    if(Traits<Scratchpad>::enabled)     enable_component("Scratchpad");
+    if(Traits<GPIO>::enabled)           enable_component("GPIO");
+    if(Traits<I2C>::enabled)            enable_component("I2C");
+    if(Traits<ADC>::enabled)            enable_component("ADC");
+    if(Traits<FPGA>::enabled)           enable_component("FPGA");
+    if(Traits<Ethernet>::enabled)       enable_component("Ethernet");
+    if(Traits<IEEE802_15_4>::enabled)   enable_component("IEEE802_15_4");
+    if(Traits<PCNet32>::enabled)        enable_component("PCNet32");
+    if(Traits<RTL8139>::enabled)        enable_component("RTL8139");
+    if(Traits<C905>::enabled)           enable_component("C905");
+    if(Traits<E100>::enabled)           enable_component("E100");
+    if(Traits<IEEE802_15_4_NIC>::enabled)       enable_component("IEEE802_15_4_NIC");
+    if(Traits<Ethernet_NIC>::enabled)   enable_component("Ethernet_NIC");
 
-    // // Enabled components
-    // if(Traits<System>::enabled)         enable_component("System");
-    // if(Traits<Application>::enabled)    enable_component("Application");
+    // Enabled components
+    if(Traits<System>::enabled)         enable_component("System");
+    if(Traits<Application>::enabled)    enable_component("Application");
     if(Traits<Thread>::enabled)         enable_component("Thread");
-    // if(Traits<Active>::enabled)         enable_component("Active");
-    // if(Traits<Periodic_Thread>::enabled)enable_component("Periodic_Thread");
-    // if(Traits<RT_Thread>::enabled)      enable_component("RT_Thread");
-    // if(Traits<Task>::enabled)           enable_component("Task");
-    // if(Traits<Scheduler<Thread>>::enabled)      enable_component("Scheduler");
-    // if(Traits<Address_Space>::enabled)  enable_component("Address_Space");
-    // if(Traits<Segment>::enabled)        enable_component("Segment");
-    // if(Traits<Synchronizer>::enabled)   enable_component("Synchronizer");
-    // if(Traits<Mutex>::enabled)          enable_component("Mutex");
-    // if(Traits<Semaphore>::enabled)      enable_component("Semaphore");
-    // if(Traits<Condition>::enabled)      enable_component("Condition");
-    // if(Traits<Clock>::enabled)          enable_component("Clock");
-    // if(Traits<Chronometer>::enabled)    enable_component("Chronometer");
-    // if(Traits<Alarm>::enabled)          enable_component("Alarm");
-    // if(Traits<Delay>::enabled)          enable_component("Delay");
-    // if(Traits<Network>::enabled)        enable_component("Network");
-    // if(Traits<TSTP>::enabled)           enable_component("TSTP");
-    // if(Traits<IP>::enabled)             enable_component("IP");
-    // if(Traits<ICMP>::enabled)           enable_component("ICMP");
-    // if(Traits<UDP>::enabled)            enable_component("UDP");
-    // if(Traits<TCP>::enabled)            enable_component("TCP");
-    // if(Traits<DHCP>::enabled)           enable_component("DHCP");
-    // if(Traits<IPC>::enabled)            enable_component("IPC");
-    // if(Traits<SmartData>::enabled)      enable_component("SmartData");
+    if(Traits<Active>::enabled)         enable_component("Active");
+    if(Traits<Periodic_Thread>::enabled)enable_component("Periodic_Thread");
+    if(Traits<RT_Thread>::enabled)      enable_component("RT_Thread");
+    if(Traits<Task>::enabled)           enable_component("Task");
+    if(Traits<Scheduler<Thread>>::enabled)      enable_component("Scheduler");
+    if(Traits<Address_Space>::enabled)  enable_component("Address_Space");
+    if(Traits<Segment>::enabled)        enable_component("Segment");
+    if(Traits<Synchronizer>::enabled)   enable_component("Synchronizer");
+    if(Traits<Mutex>::enabled)          enable_component("Mutex");
+    if(Traits<Semaphore>::enabled)      enable_component("Semaphore");
+    if(Traits<Condition>::enabled)      enable_component("Condition");
+    if(Traits<Clock>::enabled)          enable_component("Clock");
+    if(Traits<Chronometer>::enabled)    enable_component("Chronometer");
+    if(Traits<Alarm>::enabled)          enable_component("Alarm");
+    if(Traits<Delay>::enabled)          enable_component("Delay");
+    if(Traits<Network>::enabled)        enable_component("Network");
+    if(Traits<TSTP>::enabled)           enable_component("TSTP");
+    if(Traits<IP>::enabled)             enable_component("IP");
+    if(Traits<ICMP>::enabled)           enable_component("ICMP");
+    if(Traits<UDP>::enabled)            enable_component("UDP");
+    if(Traits<TCP>::enabled)            enable_component("TCP");
+    if(Traits<DHCP>::enabled)           enable_component("DHCP");
+    if(Traits<IPC>::enabled)            enable_component("IPC");
+    if(Traits<SmartData>::enabled)      enable_component("SmartData");
 }
 
 // Sets the value of a token if it exists

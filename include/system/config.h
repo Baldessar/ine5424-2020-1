@@ -7,15 +7,15 @@
 // ARCHITECTURE, MACHINE, AND APPLICATION SELECTION
 // This section is generated automatically from makedefs by $EPOS/etc/makefile
 //============================================================================
-#define SMOD library
-#define ARCH riscv
-#define MACH sifive
-#define MMOD virt
-#define APPL hello
-#define __mode_library__
-#define __arch_riscv__
-#define __mach_sifive__
-#define __mmod_virt__
+#define SMOD xxx
+#define ARCH xxx
+#define MACH xxx
+#define MMOD xxx
+#define APPL xxx
+#define __mode_xxx__
+#define __arch_xxx__
+#define __mach_xxx__
+#define __mmod_xxx__
 
 //============================================================================
 // NAMESPACES AND DEFINITIONS
@@ -114,16 +114,6 @@ namespace EPOS {
 
 #endif
 
-#ifdef __mmod_virt__
-#define __sifive__
-#define __sifive__
-#define __TSC_H                 __HEADER_ARCH(tsc)
-
-#define __UART_H                __HEADER_MACH(uart)
-#define __GPIO_H                __HEADER_MACH(gpio)
-
-#endif
-
 #ifdef __mmod_emote3__
 #define __cortex_m__
 #define __cortex_m3__
@@ -184,6 +174,14 @@ namespace EPOS {
 
 #define __UART_H                __HEADER_MACH(uart)
 #endif
+
+#ifdef __mach_riscv__
+#define __riscv__
+#define __TSC_H                 __HEADER_ARCH(tsc)
+
+#define __UART_H                __HEADER_MACH(uart)
+#endif
+
 
 //============================================================================
 // THINGS EVERBODY NEEDS
