@@ -55,7 +55,7 @@ public:
 
         operator unsigned int() const { return _flags; }
 
-        friend Debug & operator<<(Debug & db, Flags f) { db << (void *)f._flags; return db; }
+        friend Debug & operator<<(Debug & db, Flags f) { db << (void *)(unsigned long)f._flags; return db; }
 
     private:
         unsigned int _flags;

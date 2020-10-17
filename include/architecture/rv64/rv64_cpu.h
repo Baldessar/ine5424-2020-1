@@ -38,7 +38,7 @@ public:
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_Z), reg_ra(exit), reg_ip(entry) {}
+        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_Z), _reg_ra(exit), _reg_ip(entry) {}
 
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
