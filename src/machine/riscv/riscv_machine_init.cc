@@ -25,7 +25,8 @@ void Machine::pre_init(System_Info * si)
 void Machine::init()
 {
     db<Init, Machine>(TRC) << "Machine::init()" << endl;
-
+// core inicializacao
+// display init -> uart
     if(Traits<Timer>::enabled)
         Timer::init();
 }
