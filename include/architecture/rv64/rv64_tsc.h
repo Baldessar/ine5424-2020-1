@@ -22,15 +22,15 @@ class TSC: private TSC_Common
 
 private:
     static const unsigned int CLOCK = Traits<Machine>::TIMER_CLOCK;
-    static const unsigned int ACCURACY = XXXXX; // ppb
+    static const unsigned int ACCURACY = 1; // ppb //TODO
 
     enum {
-        REG_BASE = XXXXXX
+        REG_BASE = 0//TODO
     };
 
     //offsets
     enum {              // Description
-        FIELD       = XXXXXX
+        FIELD       = 0//TODO
     };
 
 public:
@@ -45,13 +45,13 @@ public:
     static PPB accuracy() { return ACCURACY; }
 
     static Time_Stamp time_stamp() {
-        // Implement
+        return 0;//IMPLEMENT
     }
 
 private:
     static void init();
 
-    static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(TSC_BASE)[o / sizeof(CPU::Reg32)]; }
+    static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(REG_BASE)[o / sizeof(CPU::Reg32)]; }
 
 };
 
