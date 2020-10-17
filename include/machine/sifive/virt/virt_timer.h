@@ -20,7 +20,7 @@ public:
     // typedef SysTick::Count Count;
 
 public:
-    System_Timer_Engine() ;
+    System_Timer_Engine() {  db<Init, Timer>(TRC) << "Isso aqui nao e pra ta acontecendo"; };
     // { new(systick()) SysTick; }
 
     // Count count() ;

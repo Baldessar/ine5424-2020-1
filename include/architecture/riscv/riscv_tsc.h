@@ -28,7 +28,7 @@ public:
     static Hertz frequency() { return CPU::clock(); }
     static PPB accuracy() { return 50; }
 
-    static void init();
+    static void init() { db<Init>(INF) << "tscinit!";}; // TODO
 
     static Time_Stamp time_stamp() {
         Time_Stamp ts(0);

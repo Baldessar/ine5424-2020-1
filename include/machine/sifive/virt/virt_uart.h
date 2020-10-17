@@ -12,16 +12,21 @@ class UART_Engine: public UART_Common
 {
 private:
     static const unsigned int UNITS = Traits<UART>::UNITS;
+    
 
 public:
-    UART_Engine(unsigned int unit, unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits);
+    UART_Engine(unsigned int unit, unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits){
+         db<Init>(INF) << "EU NAO SEI O Q EU TO FAZENDO!";
+    };
     void config(unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits) ;
     void config(unsigned int * baud_rate, unsigned int * data_bits, unsigned int * parity, unsigned int * stop_bits);
     char rxd();
-    void txd(char c);
+    void txd(char c) {
+        ((char*)Memory_Map::UART0_BASE)[0x00] = c & 0xff;
+    };
 
     bool rxd_ok();
-    bool txd_ok();
+    bool txd_ok() {return ((char*)Memory_Map::UART0_BASE)[0x00]>0;};
 
     bool rxd_full();
     bool txd_empty();

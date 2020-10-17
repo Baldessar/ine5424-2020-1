@@ -28,7 +28,9 @@ public:
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit);
+        Context(const Log_Addr & entry, const Log_Addr & exit){
+             db<Init, Timer>(TRC) << "Mais de 8000";
+        };
 //        _r0(0), _r1(1), _r2(2), _r3(3), _r4(4), _r5(5), _r6(6), _r7(7), _r8(8), _r9(9), _r10(10), _r11(11), _r12(12),
 
         void save() volatile  __attribute__ ((naked));
@@ -121,12 +123,12 @@ public:
     // using Base::fr;
     // using Base::ip;
     // using Base::pdp;
-    static bool int_disabled(); 
-    static bool int_enabled(); 
+    static bool int_disabled() {return false;}; 
+    static bool int_enabled() {return true;}; 
 
     
-    static void int_disable(); 
-    static void int_enable();
+    static void int_disable(){ asm("csrw mstatus, (0<<3)");};; 
+    static void int_enable() { asm("csrw mstatus, (1<<3)");};
 
 
     using Base::tsl;

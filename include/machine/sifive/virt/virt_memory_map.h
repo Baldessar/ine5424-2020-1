@@ -19,7 +19,7 @@ struct Memory_Map: public Cortex_Memory_Map
         GPIOC_BASE                  = 0x40006000, // PrimeCell PL061 GPIO
         GPIOD_BASE                  = 0x40007000, // PrimeCell PL061 GPIO
         USART_BASE                  = 0x40008000, // PrimeCell PL022 Synchronous Serial Port
-        UART0_BASE                  = 0x4000c000, // PrimeCell PL011 UART
+        UART0_BASE                  = 0x10000000, // PrimeCell PL011 UART
         UART1_BASE                  = 0x4000d000, // PrimeCell PL011 UART
         I2C1_BASE                   = 0x40020000, // I2C
         I2C2_BASE                   = 0x40021000, // I2C

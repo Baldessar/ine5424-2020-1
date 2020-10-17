@@ -23,7 +23,7 @@ void CPU::Context::load() const volatile
 // This function assumes A[T]PCS (i.e. "o" is in r0/a0 and "n" is in r1/a1)
 void CPU::switch_context(Context ** o, Context * n)
 {
-
+ db<Init, Timer>(TRC) << "Gambiarra cabulosa";
 }
 
 __END_SYS

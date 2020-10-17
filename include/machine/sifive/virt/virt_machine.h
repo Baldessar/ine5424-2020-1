@@ -26,7 +26,13 @@ public:
         while(end > TSC::time_stamp());
     }
 
-    static void reboot();
+    static void reboot() {    
+        volatile int *test = (int *)(void *) 0x100000;
+        *test = 0x5555;
+        while (1) {
+            asm volatile("");
+        }
+    };
     static void poweroff() { reboot(); }
 
     static const UUID & uuid() { return System::info()->bm.uuid; } // TODO: System_Info is not populated in this machine
