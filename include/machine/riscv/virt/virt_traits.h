@@ -37,8 +37,8 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int APP_HIGH          = 0;//TODO
 
     static const unsigned int PHY_MEM           = 0;//TODO
-    static const unsigned int IO_BASE           = 0;//TODO
-    static const unsigned int IO_TOP            = 0;//TODO
+    static const unsigned int IO_BASE           = 0x10001000;
+    static const unsigned int IO_TOP            = 0x10002000;
 
     static const unsigned int SYS               = IO_TOP;
     static const unsigned int SYS_CODE          = 0;//TODO

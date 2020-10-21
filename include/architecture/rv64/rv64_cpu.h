@@ -30,14 +30,14 @@ public:
     // CPU Flags
     typedef Reg32 Flags;
     enum {
-        //implement
+        FLAG_DEFAULTS = 0;//implement
     };
 
     // CPU Context
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_DEFAULTS), reg_ra(exit), reg_ip(entry) {}
+        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_DEFAULTS), _reg_ra(exit), _reg_ip(entry) {}
 
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;

@@ -13,10 +13,10 @@ struct Memory_Map
 {
     // Physical Memory
     enum {
-        UART_BASE                   = 0x10010000, // UART
+        UART_BASE                   = 0x10000000, // UART
         TIMER_BASE                  = 0,//TODO
-        GPIOA_BASE                  = 0x10060000,
-        RTC_BASE                    = 0,//TODO
+        GPIOA_BASE                  = 0,//TODO
+        RTC_BASE                    = 0x101000,
 
         CLINT_BASE                  = 0x2000000,
         PLIIC_CPU_BASE              = 0xc000000,
