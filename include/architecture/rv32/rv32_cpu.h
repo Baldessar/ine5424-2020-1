@@ -85,7 +85,7 @@ public:
     }
 
     static void fr(const Reg32 & fr) {
-        ASM("sw t0, %0" : : "r"(fr) : "fr");
+        ASM("sw a0, %0" : : "r"(fr) : "t0");
     }
 
     static Log_Addr ip() {
@@ -145,6 +145,7 @@ public:
             "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t3", "cc");
         return old;
     }
+
 
     // Power modes
     static void halt() {
