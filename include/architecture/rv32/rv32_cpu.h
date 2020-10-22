@@ -31,14 +31,14 @@ public:
     typedef Reg32 Flags;
     enum {
         //implement
-        FLAG_Z = 1 << 30
+        FLAG_Z          = 1 << 30,
     };
 
     // CPU Context
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_Z), reg_ra(exit), reg_ip(entry) {}
+        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_Z), _reg_ra(exit), _reg_ip(entry) {}
 
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
@@ -57,7 +57,6 @@ public:
         Reg32 _reg_ip; //instruction pointer
     };
 
-
     // Interrupt Service Routines
     typedef void (ISR)();
 
@@ -68,12 +67,12 @@ public:
     CPU() {};
 
 public:
-    // Register access
+   // Register access
     static Reg32 sp() {
         Reg32 value;
         ASM("lw %0, sp" : "=r"(value) :);
         return value;
-    }
+        }
 
     static void sp(const Reg32 & sp) {
         ASM("sw sp, %0" : : "r"(sp) : "sp");
@@ -86,13 +85,13 @@ public:
     }
 
     static void fr(const Reg32 & fr) {
-        ASM("sw t0, %0" : : "r"(sp) : "sp");
+        ASM("sw t0, %0" : : "r"(fr) : "fr");
     }
 
     static Log_Addr ip() {
         Reg32 value;
         ASM("lw %0, pc" : "=r"(value) :);
-        return value;        return 0;
+        return value;
     }
 
     static Reg32 pdp() { return 0; }
@@ -111,7 +110,6 @@ public:
             "   bne   t3, zero, 1b      \n" : "=&r"(old) : "r"(&lock), "r"(one) : "t3");
         return old;
     }
-
 
     using CPU_Common::finc;
     template<typename T>
@@ -135,10 +133,9 @@ public:
             "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) : "t3", "cc");
         return old + 1;
     }
-
+ 
     using CPU_Common::cas;
-
-    template <typename T>
+     template <typename T>
     static T cas(volatile T & value, T compare, T replacement) {
         register T old;
         ASM("1: lr.w   %0, %1           \n"
@@ -148,8 +145,6 @@ public:
             "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t3", "cc");
         return old;
     }
-    }
-
 
     // Power modes
     static void halt() {
@@ -187,6 +182,7 @@ public:
     static void csrw31() { /* implement - write x31 to ctrl and status register */ }
 
     static unsigned int int_id() { return 0; }
+
 
     static void switch_context(Context ** o, Context * n) __attribute__ ((naked));
 
