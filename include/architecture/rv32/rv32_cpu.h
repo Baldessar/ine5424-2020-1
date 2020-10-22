@@ -80,13 +80,12 @@ public:
 
     static Reg32 fr() {
         Reg32 value;
-        // ASM("lw %0, a0" : "=r"(value) :);
-        value = 0;
+        ASM("add %0, zero, a0" : "=r"(value) :); //TODO nao sei se esta certo
         return value;
     }
 
     static void fr(const Reg32 & fr) {
-        // ASM("sw a0, %0" : : "r"(fr) :);
+        ASM("sw a0, %0" : : "r"(fr) :);//TODO nao sei se esta certo
     }
 
     static Log_Addr ip() {
