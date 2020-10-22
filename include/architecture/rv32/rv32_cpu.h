@@ -80,12 +80,13 @@ public:
 
     static Reg32 fr() {
         Reg32 value;
-        ASM("lw %0, t0" : "=r"(value) :);
+        // ASM("lw %0, a0" : "=r"(value) :);
+        value = 0;
         return value;
     }
 
     static void fr(const Reg32 & fr) {
-        ASM("sw a0, %0" : : "r"(fr) : "t0");
+        // ASM("sw a0, %0" : : "r"(fr) :);
     }
 
     static Log_Addr ip() {
@@ -133,7 +134,7 @@ public:
             "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) : "t3", "cc");
         return old + 1;
     }
- 
+
     using CPU_Common::cas;
      template <typename T>
     static T cas(volatile T & value, T compare, T replacement) {
