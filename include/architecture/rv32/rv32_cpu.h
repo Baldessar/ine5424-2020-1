@@ -38,7 +38,7 @@ public:
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_Z), reg_ra(exit), reg_ip(entry) {}
+        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_Z), _reg_ra(exit), _reg_ip(entry) {}
 
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
@@ -86,7 +86,7 @@ public:
     }
 
     static void fr(const Reg32 & fr) {
-        ASM("sw t0, %0" : : "r"(sp) : "sp");
+        ASM("sw a0, %0" : : "r"(fr) : "t0");
     }
 
     static Log_Addr ip() {
@@ -148,7 +148,7 @@ public:
             "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t3", "cc");
         return old;
     }
-    }
+    };
 
 
     // Power modes
