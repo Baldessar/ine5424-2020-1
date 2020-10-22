@@ -22,7 +22,7 @@ class TSC: private TSC_Common
 
 private:
     static const unsigned int CLOCK = Traits<Machine>::TIMER_CLOCK;
-    static const unsigned int ACCURACY = 2000000000; // ppb
+    static const unsigned int ACCURACY = 100000000; // ppb
 
     enum {
         REG_BASE = 0x0200bff8,
@@ -52,7 +52,7 @@ public:
 private:
     static void init();
 
-     static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(TSC_BASE)[o / sizeof(CPU::Reg32)]; }
+    // static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(TSC_BASE)[o / sizeof(CPU::Reg32)]; }
 
 };
 
