@@ -7,13 +7,13 @@
         .global _start
         .type   _start, function
 _start:
-        csrr t0, mhartid #reading CSR mhartid
+        csrr t0, mhartid # reading CSR mhartid
 	bnez t0, 4f
 	csrw satp, zero
 
-        # la a0, __bss_start
-	# la a1, __bss_end
-	# bgeu a0, a1, 2f
+        la a0, __bss_start
+	la a1, __bss_end
+	bgeu a0, a1, 2f
 1:
 	# sw zero, (a0) # store doubleword - guarda "duas palavras 32bits = 64"
 	# addi a0, a0, 4 # incrementa 64 bits até chegar no fim da bss
