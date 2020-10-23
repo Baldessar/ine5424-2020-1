@@ -7,12 +7,13 @@
         .global _start
         .type   _start, function
 _start:
+        addi t5, x0, 1
         csrr t0, mhartid # reading CSR mhartid
 	bnez t0, 4f
 	csrw satp, zero
 
         la a0, __bss_start
-	la a1, __bss_end
+	la a1, __BSS_END__
 	bgeu a0, a1, 2f
 1:
 	# sw zero, (a0) # store doubleword - guarda "duas palavras 32bits = 64"
@@ -39,10 +40,13 @@ _start:
         .globl  __epos_app_entry
         .type   __epos_app_entry, function
 4:
+        addi t5, x0, 6
         wfi
 	j 4b
 __epos_app_entry:
+        addi t5, x0, 2
         call      main
+        addi t5, x0, 3
         lw        a0, 0(sp)         #save main's return value to be used by exit()
         call      _fini
         call      _exit
