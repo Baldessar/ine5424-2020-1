@@ -10,10 +10,14 @@ _start:
         csrr t0, mhartid # reading CSR mhartid
 	bnez t0, 4f
         csrw satp, zero  # SATP should be zero, but let's make sure
+        la   sp, __boot_stack__
 
+.option push
+.option norelax
+	la gp, __global_pointer$
 
         la a0, __bss_start
-	la a1, __BSS_END__
+        la a1, __BSS_END__
 	bgeu a0, a1, 2f
 1:
         sw	zero, (a0)
@@ -27,7 +31,7 @@ _start:
         la t1, _init
 
         csrw	mepc, t1
-        csrw mtvec, t2
+        # csrw mtvec, t2
         la	ra, 4f
         # implement
 
