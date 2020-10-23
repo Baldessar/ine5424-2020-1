@@ -175,7 +175,7 @@ riscv_CC_FLAGS          :=
 riscv_AS_FLAGS          :=
 riscv_LD_FLAGS          :=
 riscv_EMULATOR			= qemu-system-riscv32 -machine virt -cpu rv32gcsu-v1.10.0 -smp $(CPUS) -m $(MEM_SIZE)k -serial mon:stdio -bios none -nographic -no-reboot -kernel 
-riscv_DEBUGGER          := /opt/riscv/bin/riscv32-unknown-linux-gnu-gdb 
+riscv_DEBUGGER          := /opt/riscv/bin/riscv32-unknown-linux-gnu-gdb
 riscv_FLASHER           :=
 riscv_MAGIC             := --nmagic
 riscv_CODE_NAME := .init
@@ -308,7 +308,7 @@ TCPDUMP		:= tcpdump -tttttennvvvXXr
 
 TEE		:= tee
 
-TERM		:= xterm -e
+TERM		:= gnome-terminal --
 
 TOUCH		:= touch
 
