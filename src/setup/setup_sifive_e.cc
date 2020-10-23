@@ -20,7 +20,7 @@ void _vector_table()
 
     // Informação obtida em https://sifive.cdn.prismic.io/sifive/0d163928-2128-42be-a75a-464df65e04e0_sifive-interrupt-cookbook.pdf
     ASM("\t\n
-        .word _vector_table         # mtvec + 0x00 Reserved \t\n
+        .word _vector_table + 1     # mtvec + 0x00 Reserved \t\n
         .word _vector_table + 1     # mtvec + 0x04 Reserved \t\n
         .word _vector_table + 1     # mtvec + 0x08 Reserved \t\n
         .word _vector_table + 1     # mtvec + 0x0c Software Interrupt \t\n
@@ -47,7 +47,7 @@ void _vector_table()
         .word _vector_table + 1     # mtvec + 0x60 Local Interrupt \t\n
         .word _vector_table + 1     # mtvec + 0x64 Local Interrupt \t\n
         .word _vector_table + 1     # mtvec + 0x68 Local Interrupt \t\n
-        .word _vector_table + 1     # mtvec + 0x6v Local Interrupt \t\n
+        .word _vector_table + 1     # mtvec + 0x6c Local Interrupt \t\n
         .word _vector_table + 1     # mtvec + 0x70 Local Interrupt \t\n
         .word _vector_table + 1     # mtvec + 0x74 Local Interrupt \t\n
         .word _vector_table + 1     # mtvec + 0x78 Local Interrupt \t\n
