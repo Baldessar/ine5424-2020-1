@@ -1,2 +1,4 @@
 *.elf
 target remote localhost:1234
+include/system/config.h
+tools/*

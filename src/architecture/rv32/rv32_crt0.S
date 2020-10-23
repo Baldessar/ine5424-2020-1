@@ -9,6 +9,8 @@
 _start:
         csrr t0, mhartid # reading CSR mhartid
 	bnez t0, 4f
+        csrw satp, zero  # SATP should be zero, but let's make sure
+
 
         la a0, __bss_start
 	la a1, __BSS_END__
