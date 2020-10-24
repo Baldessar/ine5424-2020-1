@@ -154,17 +154,18 @@ public:
 
     //implement
     static Flags flags() {
-        //implement
+        //THERE IS NO FLAG TO RETURN
         return 0;
     }
 
     static void flags(const Flags & flags) {
-        //implement
+        //THERE IS NO FLAG TO SET
     }
 
     static unsigned int id() {
-        //implement
-        return 0;
+        int mhartId;
+        mhartId = 0;
+        return mhartId;
     }
 
     static unsigned int cores() {

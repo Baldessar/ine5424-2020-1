@@ -27,11 +27,12 @@ _start:
 2:
         # Set all bytes in the BSS section to zero.
         # la sp, _stack_end
-        la t2, _vector_table
-        la t1, _init
+
+        la      t2, _vector_table
+        la      t1, _init
 
         csrw	mepc, t1
-        # csrw mtvec, t2
+        csrw mtvec, t2
         la	ra, 4f
         # implement
 
@@ -47,6 +48,6 @@ _start:
 	j 4b
 __epos_app_entry:
         call      main
-        lw        a0, 0(sp)         #save main's return value to be used by exit()
+        lw        a0, 0(sp)         # save main's return value to be used by exit()
         call      _fini
         call      _exit
