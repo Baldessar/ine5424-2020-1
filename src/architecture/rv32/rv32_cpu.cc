@@ -13,7 +13,7 @@ unsigned int CPU::_bus_clock;
 void CPU::Context::save() volatile
 {ASM("c_save:                                                                               \n"
         "       .set NUM_GP_REGS, 32                                                        \n"
-        "       .set REG_SIZE, 8                                                            \n"
+        "       .set REG_SIZE, 4                                                            \n"
         "       .altmacro                                                                   \n"
         "       .macro save_gp i, basereg=t6                                                \n"
         "           sw x\\i, ((\\i)*REG_SIZE)(\\basereg)                                    \n"
@@ -49,8 +49,34 @@ void CPU::Context::save() volatile
 
 void CPU::Context::load() const volatile
 {
-    ASM("c_load:                                \n"
-        "       j   c_load                      \n");
+    ASM("c_load:                                                                               \n"
+        "       .set NUM_GP_REGS, 32                                                        \n"
+        "       .set REG_SIZE, 4                                                            \n"
+        "       .altmacro                                                                   \n"
+        "       .macro load_gp i, basereg=t6                                                \n"
+        "           lw x\\i, ((\\i)*REG_SIZE)(\\basereg)                                    \n"
+        "       .endm                                                                       \n"
+        "       .macro load_fp i, basereg=t6                                                \n"
+        "           flw f\\i, ((NUM_GP_REGS+(\\i))*REG_SIZE)(\\basereg)                     \n"
+        "       .endm                                                                       \n"
+        "       csrr t1, mstatus                                                            \n"
+        "       srli t0, t1, 13                                                             \n"
+        "       andi t0, t0, 3                                                              \n"
+        "       li t3, 3                                                                    \n"
+        "       bne t0, t3, 1f                                                              \n"
+        "       .set i, 0                                                                   \n"
+        "       .rept 32                                                                    \n"
+        "           load_fp %i                                                              \n"
+        "           .set i, i+1                                                             \n"
+        "       .endr                                                                       \n"
+        "1:                                                                                 \n"
+        "       .set i, 1                                                                   \n"
+        "       .rept 31                                                                    \n"
+        "           load_gp %i                                                              \n"
+        "           .set i, i+1                                                             \n"
+        "       .endr                                                                       \n"
+        "                                                                                   \n"
+        "                                                                                   \n");
     // implement
 }
 
