@@ -11,6 +11,38 @@ void _vector_table()
     ASM("\t\n\
         # Initialize and go to _start                                           \t\n\
         j _start                                                                \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
+        nop                                                                     \t\n\
     ");
     
 

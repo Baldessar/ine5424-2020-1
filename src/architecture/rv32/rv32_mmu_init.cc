@@ -10,9 +10,9 @@ extern "C" void * _end;
 __BEGIN_SYS
 
 void MMU::init()
-{
+{   
+    
     db<Init, MMU>(TRC) << "MMU::init()" << endl;
-
     db<Init, MMU>(INF) << "MMU::init::dat.b=" << &__data_start << ",dat.e=" << &_edata << ",bss.b=" << &__bss_start << ",bss.e=" << &_end << endl;
 
     // For machines that do not feature a real MMU, frame size = 1 byte
@@ -21,4 +21,3 @@ void MMU::init()
 }
 
 __END_SYS
-

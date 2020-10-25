@@ -77,12 +77,14 @@ public:
     }
 
     bool rxd_ok() { 
+        return true;
         Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
         if((uart[UART_LINE_STATUS] & uart[UART_REG_STATUS_RX]) == 0) return true;
         return false;
     }
 
-    bool txd_ok() { 
+    bool txd_ok() {
+        return true; 
         Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
         if((uart[UART_LINE_STATUS] & uart[UART_REG_STATUS_TX]) == 0) return true;
         return false;

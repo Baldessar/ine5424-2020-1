@@ -32,7 +32,7 @@ _start:
         la      t1, _init
 
         csrw	mepc, t1
-        csrw mtvec, t2
+        # csrw mtvec, t2
         la	ra, 4f
         # implement
 
