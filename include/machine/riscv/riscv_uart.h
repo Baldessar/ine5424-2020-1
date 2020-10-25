@@ -31,14 +31,14 @@ private:
         UART_REG                = 0x00,
         UART_REG_STATUS_RX      = 0x01,
         UART_REG_STATUS_TX      = 0x20,
-        UART_LINE_STATUS        = 0x05,
-        UART_FIFO_CONTROL       = 0x02, // não sei se usaremos
-        UART_LINE_CONTROL       = 0x03  // não sei se usaremos
+        
     };
 
     // uart useful bits
     enum {
-        // Implement        
+        UART_LINE_STATUS        = 5,
+        UART_FIFO_CONTROL       = 2, // não sei se usaremos
+        UART_LINE_CONTROL       = 3  // não sei se usaremos       
 
     };
 
@@ -78,13 +78,13 @@ public:
 
     bool rxd_ok() { 
         Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
-        if((uart[UART_LINE_STATUS] & uart[UART_REG_STATUS_RX]) == 0) return true;
+        if((uart[UART_LINE_STATUS] & UART_REG_STATUS_RX) == 0) return true;
         return false;
     }
 
     bool txd_ok() { 
         Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
-        if((uart[UART_LINE_STATUS] & uart[UART_REG_STATUS_TX]) == 0) return true;
+        if((uart[UART_LINE_STATUS] & UART_REG_STATUS_TX) == 0) return true;
         return false;
     }
 
