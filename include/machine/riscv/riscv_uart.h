@@ -26,16 +26,17 @@ private:
 
     // uart offsets
     enum {
-        // implement
+        UART_REG = 0x00
     };
 
     // uart useful bits
     enum {
-        // implement
+        // Implement
     };
 
     enum {
-        UART_BASE       = Memory_Map::UART_BASE
+        UART_BASE       = Memory_Map::UART_BASE,
+        UART_BUFFER     = UART_BASE
     };
 
 public:
@@ -57,14 +58,14 @@ public:
     void config(unsigned int * baud_rate, unsigned int * data_bits, unsigned int * parity, unsigned int * stop_bits) {}
 
     Reg8 rxd() { 
-        volatile Reg8 *ch = reinterpret_cast<Reg8 *>UART_BASE;
-        return *ch;
+        volatile Reg8 *ch = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        return ch[UART_REG];
     }
 
     // transmit data
     void txd(Reg8 c) { 
-        volatile Reg8 *ch = reinterpret_cast<Reg8 *>UART_BASE;
-        *ch = c;
+        volatile Reg8 *ch = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        ch[UART_REG] = c;
     }
 
     bool rxd_ok() { 
