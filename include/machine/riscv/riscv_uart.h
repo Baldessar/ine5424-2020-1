@@ -60,7 +60,7 @@ public:
 
     void config(unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits)
     {
-        Engine::config(baud_rate, data_bits, parity, stop_bits);
+        //Engine::config(baud_rate, data_bits, parity, stop_bits);
     }
 
     void config(unsigned int * baud_rate, unsigned int * data_bits, unsigned int * parity, unsigned int * stop_bits) {}
