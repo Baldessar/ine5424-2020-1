@@ -57,11 +57,14 @@ public:
     void config(unsigned int * baud_rate, unsigned int * data_bits, unsigned int * parity, unsigned int * stop_bits) {}
 
     Reg8 rxd() { 
-        // implement
-        return Reg8(0);
+        volatile Reg8 *ch = reinterpret_cast<Reg8 *>UART_BASE;
+        return *ch;
     }
+
+    // transmit data
     void txd(Reg8 c) { 
-        // implement
+        volatile Reg8 *ch = reinterpret_cast<Reg8 *>UART_BASE;
+        *ch = c;
     }
 
     bool rxd_ok() { 
