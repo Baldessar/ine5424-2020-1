@@ -12,6 +12,8 @@ unsigned int CPU::_bus_clock;
 // Class methods
 void CPU::Context::save() volatile
 {ASM("c_save:                                \n"
+        "       .set NUM_GP_REGS, 32                     \n"
+        "       .set REG_SIZE, 8                     \n"
         "       .altmacro                   \n"
         "       .macro save_gp i, basereg=t6                   \n"
         "           sw x\\i, ((\\i)*REG_SIZE)(\\basereg)                     \n"
@@ -19,8 +21,6 @@ void CPU::Context::save() volatile
         "       .macro save_fp i, basereg=t6                   \n"
         "           fsw x\\i, ((NUM_GP_REGS+(\\i))*REG_SIZE)(\\basereg)                     \n"
         "       .endm                    \n"
-        "       .set NUM_GP_REGS, 32                     \n"
-        "       .set REG_SIZE, 8                     \n"
         "       csrrw t6, mscratch, t6                      \n"
         "       .set i, 0                      \n"
         "       .rept 31                      \n"
