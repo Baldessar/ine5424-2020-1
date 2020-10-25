@@ -25,13 +25,21 @@ private:
     // typedef UART_Engine Engine;
 
     // uart offsets
+    // https://github.com/riscv/riscv-pk/blob/master/machine/uart16550.c
+    // Peguei aqui, deem uma conferida se funciona certo
     enum {
-        UART_REG = 0x00
+        UART_REG                = 0x00,
+        UART_REG_STATUS_RX      = 0x01,
+        UART_REG_STATUS_TX      = 0x20,
+        UART_LINE_STATUS        = 0x05,
+        UART_FIFO_CONTROL       = 0x02, // não sei se usaremos
+        UART_LINE_CONTROL       = 0x03  // não sei se usaremos
     };
 
     // uart useful bits
     enum {
-        // Implement
+        // Implement        
+
     };
 
     enum {
@@ -52,7 +60,7 @@ public:
 
     void config(unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits)
     {
-        // implement
+        Engine::config(baud_rate, data_bits, parity, stop_bits);
     }
 
     void config(unsigned int * baud_rate, unsigned int * data_bits, unsigned int * parity, unsigned int * stop_bits) {}
@@ -69,13 +77,15 @@ public:
     }
 
     bool rxd_ok() { 
-        // implement
-        return true;
+        Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        if((uart[UART_LINE_STATUS] & uart[UART_REG_STATUS_RX]) == 0) return true;
+        return false;
     }
 
     bool txd_ok() { 
-        // implement
-        return true;
+        Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        if((uart[UART_LINE_STATUS] & uart[UART_REG_STATUS_TX]) == 0) return true;
+        return false;
     }
 
     bool rxd_full() { return false; } // implement
