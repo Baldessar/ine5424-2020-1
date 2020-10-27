@@ -93,51 +93,51 @@ public:
         ch[UART_REG] = c;
     }
     
-    
-    bool rxd_ok() { return !(uart(FR) & RXFE); }
-    bool txd_ok() { return !(uart(FR) & TXFF); }
-
-    bool rxd_full() { return (uart(FR) & RXFF); }
-    bool txd_empty() { return (uart(FR) & TXFE) && !(uart(FR) & BUSY); }
-
-    bool busy() { return (uart(FR) & BUSY); }
-    
-    
     /*
+    bool rxd_ok() { return !(uart(UART_MODEM_STATUS) & RXFE); }
+    bool txd_ok() { return !(uart(UART_MODEM_STATUS) & TXFF); }
+
+    bool rxd_full() { return (uart(UART_MODEM_STATUS) & RXFF); }
+    bool txd_empty() { return (uart(UART_MODEM_STATUS) & TXFE) && !(uart(UART_MODEM_STATUS) & BUSY); }
+
+    bool busy() { return (uart(UART_MODEM_STATUS) & BUSY); }
+    */
+    
+    
     bool rxd_ok() { 
-        unsigned int o = FR;
-        volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)];
+        unsigned int o = UART_MODEM_STATUS;
+        volatile Reg32 &uart = reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)];
         //volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
-        return !(uart[UART_MODEM_STATUS] & RXFE);
+        return !(uart & RXFE);
     }
 
     bool txd_ok() {
-        unsigned int o = FR;
-        volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)];
+        unsigned int o = UART_MODEM_STATUS;
+        volatile Reg32 &uart = reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)];
         //volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
-        return !(uart[UART_MODEM_STATUS] & TXFF);
+        return !(uart & TXFF);
     }
 
     bool rxd_full() { 
-        unsigned int o = FR;
-        volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)];
+        unsigned int o = UART_MODEM_STATUS;
+        volatile Reg32 &uart = reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)];
         //volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
-        return (uart[UART_MODEM_STATUS] & RXFF); 
+        return (uart & RXFF); 
     } 
     
     bool txd_empty() { 
-        unsigned int o = FR;
-        volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)];
+        unsigned int o = UART_MODEM_STATUS;
+        volatile Reg32 &uart = reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)];
         //volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
-        return ((uart[UART_MODEM_STATUS] & TXFE) && !(uart[UART_MODEM_STATUS] & BUSY));
+        return ((uart & TXFE) && !(uart & BUSY));
     }
 
     bool busy() {
-        unsigned int o = FR;
-        volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)];
+        unsigned int o = UART_MODEM_STATUS;
+        volatile Reg32 &uart = reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)];
         //volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
-        return (uart[UART_MODEM_STATUS] & BUSY);
-    }*/
+        return (uart & BUSY);
+    }
     
 
     void enable() {}
