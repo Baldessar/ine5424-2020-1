@@ -26,19 +26,34 @@ private:
 
     // uart offsets
     // https://github.com/riscv/riscv-pk/blob/master/machine/uart16550.c
+    // https://www.xilinx.com/support/documentation/ip_documentation/axi_uart16550/v2_0/pg143-axi-uart16550.pdf
     // Peguei aqui, deem uma conferida se funciona certo
     enum {
         UART_REG                = 0x00,
         UART_REG_STATUS_RX      = 0x01,
         UART_REG_STATUS_TX      = 0x20,
+        UART_LINE_STATUS        = 0x14,
+        UART_FIFO_CONTROL       = 0x08, // não sei se usaremos
+        UART_LINE_CONTROL       = 0x0C, // não sei se usaremos 
+        UART_MODEM_STATUS       = 0x18, // usar no txd_ok, rxd_ok, etc
+        UART_MODEM_CONTROL      = 0x10 
         
     };
 
     // uart useful bits
     enum {
-        UART_LINE_STATUS        = 5,
-        UART_FIFO_CONTROL       = 2, // não sei se usaremos
-        UART_LINE_CONTROL       = 3  // não sei se usaremos       
+
+        // receive fifo empty bit
+        RXFE                    = 16,  // 00010000
+        // receive fifo full bit
+        RXFF                    = 64,  // 01000000
+        // transmit fifo empty bit
+        TXFE                    = 128, // 10000000
+        // transmit fifo full bit
+        TXFF                    = 32,  // 00100000
+        // busy transmiting data bit
+        BUSY                    = 8,   // 00001000
+             
 
     };
 
@@ -60,7 +75,7 @@ public:
 
     void config(unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits)
     {
-        //Engine::config(baud_rate, data_bits, parity, stop_bits);
+        // Implement
     }
 
     void config(unsigned int * baud_rate, unsigned int * data_bits, unsigned int * parity, unsigned int * stop_bits) {}
@@ -77,24 +92,20 @@ public:
     }
 
     bool rxd_ok() { 
-        return true;
         Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
-        if((uart[UART_LINE_STATUS] & UART_REG_STATUS_RX) == 0) return true;
-        return false;
-    }
+        return !(uart[UART_MODEM_STATUS] & RXFE);
 
     bool txd_ok() {
-        return true; 
         Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
-        if((uart[UART_LINE_STATUS] & UART_REG_STATUS_TX) == 0) return true;
-        return false;
+        return !(uart[UART_MODEM_STATUS] & TXFF);
     }
 
-    bool rxd_full() { return false; } // implement
+    bool rxd_full() { 
+        return false;
+     } 
     
     bool txd_empty() { 
-        // implement
-        return true; 
+        return true;
     }
 
     bool busy() {
