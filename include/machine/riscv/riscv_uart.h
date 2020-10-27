@@ -45,7 +45,7 @@ private:
     enum {
 
         // receive fifo empty bit
-        RXFE                    = 1 <<  4,,  // 00010000
+        RXFE                    = 1 <<  4,  // 00010000
         // receive fifo full bit
         RXFF                    = 1 <<  6,  // 01000000
         // transmit fifo empty bit
@@ -53,7 +53,7 @@ private:
         // transmit fifo full bit
         TXFF                    = 1 <<  5,  // 00100000
         // busy transmiting data bit
-        BUSY                    = 1 <<  3,    // 00001000
+        BUSY                    = 1 <<  3,  // 00001000
              
 
     };
@@ -93,27 +93,27 @@ public:
     }
 
     bool rxd_ok() { 
-        Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
         return !(uart[UART_MODEM_STATUS] & RXFE);
     }
 
     bool txd_ok() {
-        Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
         return !(uart[UART_MODEM_STATUS] & TXFF);
     }
 
     bool rxd_full() { 
-        Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
         return (uart[UART_MODEM_STATUS] & RXFF); 
     } 
     
     bool txd_empty() { 
-        Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
         return ((uart[UART_MODEM_STATUS] & TXFE) && !(uart[UART_MODEM_STATUS] & BUSY));
     }
 
     bool busy() {
-        Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
         return (uart[UART_MODEM_STATUS] & BUSY);
     }
 
