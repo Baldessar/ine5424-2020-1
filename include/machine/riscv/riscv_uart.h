@@ -92,7 +92,7 @@ public:
         volatile Reg8 *ch = reinterpret_cast<Reg8 *>(UART_BUFFER);
         ch[UART_REG] = c;
     }
-
+    /*
     bool rxd_ok() { return !(uart(FR) & RXFE); }
     bool txd_ok() { return !(uart(FR) & TXFF); }
 
@@ -100,33 +100,33 @@ public:
     bool txd_empty() { return (uart(FR) & TXFE) && !(uart(FR) & BUSY); }
 
     bool busy() { return (uart(FR) & BUSY); }
-
-    /*
+    */
+    
     bool rxd_ok() { 
-        Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
+        volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
         return !(uart[UART_MODEM_STATUS] & RXFE);
     }
 
     bool txd_ok() {
-        Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
+        volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
         return !(uart[UART_MODEM_STATUS] & TXFF);
     }
 
     bool rxd_full() { 
-        Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
+        volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
         return (uart[UART_MODEM_STATUS] & RXFF); 
     } 
     
     bool txd_empty() { 
-        Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
+        volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
         return ((uart[UART_MODEM_STATUS] & TXFE) && !(uart[UART_MODEM_STATUS] & BUSY));
     }
 
     bool busy() {
-        Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
+        volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
         return (uart[UART_MODEM_STATUS] & BUSY);
     }
-    */
+    
 
     void enable() {}
     void disable() {}
