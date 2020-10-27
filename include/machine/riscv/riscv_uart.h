@@ -36,7 +36,8 @@ private:
         UART_FIFO_CONTROL       = 0x08, // não sei se usaremos
         UART_LINE_CONTROL       = 0x0C, // não sei se usaremos 
         UART_MODEM_STATUS       = 0x18, // usar no txd_ok, rxd_ok, etc
-        UART_MODEM_CONTROL      = 0x10 
+        UART_MODEM_CONTROL      = 0x10,
+        UART_TEST_REGISTER      = 0x90 
         
     };
 
@@ -98,7 +99,7 @@ public:
 
     bool txd_ok() {
         Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
-        return !(uart[UART_LINE_STATUS] & TXFF);
+        return !(uart[UART_TEST_REGISTER] & TXFF);
     }
 
     bool rxd_full() { 
