@@ -7,6 +7,9 @@
         .global _start
         .type   _start, function
 _start:
+        csrw satp, x0
+        sfence.vma
+        
         csrr t0, mhartid # reading CSR mhartid
 	bnez t0, 4f
 
