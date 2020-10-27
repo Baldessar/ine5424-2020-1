@@ -15,7 +15,6 @@ void MMU::init()
     db<Init, MMU>(TRC) << "MMU::init()" << endl;
     db<Init, MMU>(INF) << "MMU::init::dat.b=" << &__data_start << ",dat.e=" << &_edata << ",bss.b=" << &__bss_start << ",bss.e=" << &_end << endl;
 
-<<<<<<< HEAD
     // Page_Table table = Page_Table();
     // MMU::table* mmu_root = table.get_page_table();
     // table.table_len(mmu_root); 
@@ -25,8 +24,6 @@ void MMU::init()
     //  unsigned int satp =  0 << 31;
     // ASM("csrw satp, %0": "=r"(satp) :);
     // ASM("sfence.vma");
-=======
->>>>>>> 36fd8fc0dd704c1e1ecc91f4e4c310a69579d4ae
     // For machines that do not feature a real MMU, frame size = 1 byte
     // TODO: The stack left at the top of the memory for INIT is freed at Thread::init()
     free(&_end, pages(Memory_Map::SYS_STACK - reinterpret_cast<unsigned int>(&_end)));

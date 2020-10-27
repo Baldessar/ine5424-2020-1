@@ -1099,11 +1099,7 @@ private:
 template<typename T,
           typename R = typename T::Criterion,
           typename El = List_Elements::Doubly_Linked_Scheduling<T, R> >
-<<<<<<< HEAD
-class Fakin_lifo: private Ordered_List<T, R, El>
-=======
 class Lifo: private Ordered_List<T, R, El>
->>>>>>> 36fd8fc0dd704c1e1ecc91f4e4c310a69579d4ae
 {
 private:
     typedef Ordered_List<T, R, El> Base;
@@ -1115,11 +1111,7 @@ public:
     typedef typename Base::Iterator Iterator;
 
 public:
-<<<<<<< HEAD
-    Fakin_lifo(): _chosen(0) {}
-=======
     Lifo(): _chosen(0) {}
->>>>>>> 36fd8fc0dd704c1e1ecc91f4e4c310a69579d4ae
 
     using Base::empty;
     using Base::size;
