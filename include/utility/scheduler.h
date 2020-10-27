@@ -276,7 +276,11 @@ namespace Scheduling_Criteria
 
 // Scheduling_Queue
 template<typename T, typename R = typename T::Criterion>
+<<<<<<< HEAD
 class Scheduling_Queue: public Fakin_lifo<T> {};
+=======
+class Scheduling_Queue: public Lifo<T> {};
+>>>>>>> 36fd8fc0dd704c1e1ecc91f4e4c310a69579d4ae
 
 template<typename T>
 class Scheduling_Queue<T, Scheduling_Criteria::GRR>:
