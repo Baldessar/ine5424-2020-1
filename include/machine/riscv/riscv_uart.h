@@ -98,7 +98,7 @@ public:
 
     bool txd_ok() {
         Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
-        return !(uart[UART_MODEM_STATUS] & TXFF);
+        return !(uart[UART_LINE_STATUS] & TXFF);
     }
 
     bool rxd_full() { 
