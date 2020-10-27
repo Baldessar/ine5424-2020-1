@@ -36,6 +36,7 @@ private:
         UART_FIFO_CONTROL       = 0x08, // não sei se usaremos
         UART_LINE_CONTROL       = 0x0C, // não sei se usaremos 
         UART_MODEM_STATUS       = 0x18, // usar no txd_ok, rxd_ok, etc
+        FR                      = 0x18,
         UART_MODEM_CONTROL      = 0x10,
         UART_TEST_REGISTER      = 0x90 
         
@@ -92,6 +93,15 @@ public:
         ch[UART_REG] = c;
     }
 
+    bool rxd_ok() { return !(uart(FR) & RXFE); }
+    bool txd_ok() { return !(uart(FR) & TXFF); }
+
+    bool rxd_full() { return (uart(FR) & RXFF); }
+    bool txd_empty() { return (uart(FR) & TXFE) && !(uart(FR) & BUSY); }
+
+    bool busy() { return (uart(FR) & BUSY); }
+
+    /*
     bool rxd_ok() { 
         Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
         return !(uart[UART_MODEM_STATUS] & RXFE);
@@ -116,6 +126,7 @@ public:
         Reg32 *uart = reinterpret_cast<Reg32 *>(UART_BUFFER);
         return (uart[UART_MODEM_STATUS] & BUSY);
     }
+    */
 
     void enable() {}
     void disable() {}
@@ -139,6 +150,7 @@ public:
 
 private:
     static void init() {}
+    volatile Reg32 & uart(unsigned int o) { return reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)]; }
 };
 
 __END_SYS
