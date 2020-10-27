@@ -43,11 +43,13 @@ _start:
         .align  4
         .globl  __epos_app_entry
         .type   __epos_app_entry, function
-4:
-        wfi
-	j 4b
+
 __epos_app_entry:
         call      main
         lw        a0, 0(sp)         # save main's return value to be used by exit()
         call      _fini
         call      _exit
+4:
+        wfi
+	j 4b
+

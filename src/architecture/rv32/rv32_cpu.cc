@@ -83,7 +83,7 @@ void CPU::Context::load() const volatile
         "       lw    x31, -112(sp)             \n"
         "       lw    x1,  -116(sp)             \n"
         "       lw    x31,   -4(sp)             \n");
-    ASM("       j    main                       \n");
+    ASM("       jr     x1               \n");
 }
 
 void CPU::switch_context(Context ** o, Context * n)
