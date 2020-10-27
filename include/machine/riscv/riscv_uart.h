@@ -45,15 +45,15 @@ private:
     enum {
 
         // receive fifo empty bit
-        RXFE                    = 16,  // 00010000
+        RXFE                    = 1 <<  4,,  // 00010000
         // receive fifo full bit
-        RXFF                    = 64,  // 01000000
+        RXFF                    = 1 <<  6,  // 01000000
         // transmit fifo empty bit
-        TXFE                    = 128, // 10000000
+        TXFE                    = 1 <<  7,  // 10000000
         // transmit fifo full bit
-        TXFF                    = 32,  // 00100000
+        TXFF                    = 1 <<  5,  // 00100000
         // busy transmiting data bit
-        BUSY                    = 8,   // 00001000
+        BUSY                    = 1 <<  3,    // 00001000
              
 
     };
@@ -99,7 +99,7 @@ public:
 
     bool txd_ok() {
         Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
-        return !(uart[UART_TEST_REGISTER] & TXFF);
+        return !(uart[UART_MODEM_STATUS] & TXFF);
     }
 
     bool rxd_full() { 
