@@ -33,7 +33,7 @@ public:
     {
         if (Traits<System>::reboot) {
             db<Machine>(WRN) << "Machine::reboot()" << endl;
-            CPU::halt();
+            poweroff();
         } else {
             poweroff();
         }
@@ -41,7 +41,11 @@ public:
     static void poweroff()
     {
         db<Machine>(WRN) << "Machine::poweroff()" << endl;
-        // implement
+        volatile int* test = (int*) 0x100000;
+        *test = 0x5555;
+        while(1){
+            ASM(" ");
+        }
     }
 
     static void smp_barrier_init(unsigned int n_cpus) {
