@@ -7,12 +7,13 @@
         .global _start
         .type   _start, function
 _start:
-        csrw satp, x0
-        sfence.vma
         
         csrr t0, mhartid # reading CSR mhartid
 	bnez t0, 4f
 
+        csrw satp, x0
+        sfence.vma
+        
         la   sp, __boot_stack__
         .option push
         .option norelax
@@ -55,4 +56,3 @@ __epos_app_entry:
 4:
         wfi
 	j 4b
-
