@@ -276,7 +276,7 @@ namespace Scheduling_Criteria
 
 // Scheduling_Queue
 template<typename T, typename R = typename T::Criterion>
-class Scheduling_Queue: public Scheduling_List<T> {};
+class Scheduling_Queue: public Lifo<T> {};
 
 template<typename T>
 class Scheduling_Queue<T, Scheduling_Criteria::GRR>:
