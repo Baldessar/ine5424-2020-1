@@ -11,7 +11,10 @@ unsigned int CPU::_bus_clock;
 
 // Class methods
 void CPU::Context::save() volatile
-{ASM("c_save:                                                                               \n"
+{
+
+    db<Machine>(WRN) << "Save context" << endl;
+    ASM("c_save:                                                                               \n"
         "       .set NUM_GP_REGS, 32                                                        \n"
         "       .set REG_SIZE, 8                                                            \n"
         "       .altmacro                                                                   \n"
@@ -49,6 +52,7 @@ void CPU::Context::save() volatile
 
 void CPU::Context::load() const volatile
 {
+    db<Machine>(WRN) << "load context" << endl;
     System::_heap->free(reinterpret_cast<void *> (Memory_Map::SYS_STACK), Traits<System>::STACK_SIZE);
     ASM("c_load:                                \n"
         "       mv    sp, %0                    \n"
@@ -88,6 +92,8 @@ void CPU::Context::load() const volatile
 
 void CPU::switch_context(Context ** o, Context * n)
 {
+
+    db<Machine>(WRN) << "switch context" << endl;
     ASM(" sw     x31,   -8(sp)          \n"  // push x31 into stack to use as temp register
 		" la     x31,   .ret            \n"  // get return address
 		" sw     x31,   -4(sp)          \n"  // push return address as PC
