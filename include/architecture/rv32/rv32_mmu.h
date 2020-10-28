@@ -10,8 +10,6 @@
 #include <architecture/cpu.h>
 #include <architecture/mmu.h>
 
-
-
 __BEGIN_SYS
 
 class MMU: public MMU_Common<0, 0, 0>
@@ -25,7 +23,8 @@ private:
 
 public:
     // Page Flags
-    typedef MMU_Common<0, 0, 0>::Flags RISCV_Flags;
+    typedef MMU_Common<0, 0, 0>::Flags RV32_Flags;
+
     // Page_Table
     class Page_Table {};
 
@@ -49,7 +48,7 @@ public:
     private:
         Phy_Addr _phy_addr;
         unsigned int _bytes;
-        RISCV_Flags _flags;
+        RV32_Flags _flags;
     };
 
     // Page Directory

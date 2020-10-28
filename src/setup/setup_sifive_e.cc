@@ -6,85 +6,62 @@ extern "C" { void _vector_table() __attribute__ ((used, naked, section(".init"))
 
 // Interrupt Vector Table
 void _vector_table()
-{   
-    
+{
     ASM("\t\n\
-        # Initialize and go to _start                                           \t\n\
+    j _reset                                                                    \t\n\
+    .align 4                                                                    \t\n\
+                                                                                \t\n\
+_reset:                                                                         \t\n\
+                                                                                \t\n\
+        # SATP should be zero, but let's make sure. Each hart has its own.      \t\n\
+        csrw    satp, zero                                                      \t\n\
+                                                                                \t\n\
+        # Non-bootstrapping harts wait for an IPI                               \t\n\
+        csrr    t0, mhartid                                                     \t\n\
+        bnez    t0, secondary                                                   \t\n\
+                                                                                \t\n\
+        # Control registers, set the stack, mstatus, mepc,                      \t\n\
+        # and mtvec to return to the main function.                             \t\n\
+        # 16kB * hart ID is subtracted from the boot stack to avoid overlapping \t\n\
+        la      sp, __boot_stack__                                              \t\n\
+        li      t0, 0x1                                                         \t\n\
+        slli    t0, t0, 15                                                      \t\n\
+        csrr    a0, mhartid                                                     \t\n\
+        mul     t0, t0, a0                                                      \t\n\
+        sub     sp, sp, t0                                                      \t\n\
+                                                                                \t\n\
+        # Setting `mstatus` register:                                           \t\n\
+        # 0b11 << 11: Machine's previous protection mode is 3 (MPP=3).          \t\n\
+        #       0 = USER                                                        \t\n\
+        #       1 = SUPERVISOR                                                  \t\n\
+        #       3 = MACHINE                                                     \t\n\
+        # 1 << 7    : Machine's previous interrupt-enable bit is 1 (MPIE=1).    \t\n\
+        # 1 << 3    : Machine's interrupt-enable bit is 1 (MIE=1).              \t\n\
+        li      t0, (0b11 << 11) | (1 << 7) | (1 << 3)                          \t\n\
+        csrw    mstatus, t0                                                     \t\n\
+                                                                                \t\n\
+        # seting paging disabled                                                \t\n\
+        csrw sptbr, zero                                                        \t\n\
+                                                                                \t\n\
+        # Machine's exception program counter (MEPC) is set to `_start`.        \t\n\
+        la      t1, _start                                                      \t\n\
+        csrw    mepc, t1                                                        \t\n\
+                                                                                \t\n\
+        # Machine's trap vector base address is set to vector table             \t\n\
+        # IMPLEMENT : FOR WHILE, ONLY ADDRESSING THE EXCEPTION HANDLING         \t\n\
+        la      t2, _exception_handling                                         \t\n\
+        csrw    mtvec, t2                                                       \t\n\
+                                                                                \t\n\
+        # Setting Machine's interrupt-enable bits (`mie` register):             \t\n\
+        # IMPLEMENT : configure MIE                                             \t\n\
+                                                                                \t\n\
+        mret                                                                    \t\n\
+                                                                                \t\n\
+secondary:                                                                      \t\n\
+        # IMPLEMENT : prepare to be awaken                                      \t\n\
+                                                                                \t\n\
+wait:                                                                           \t\n\
+        wfi                                                                     \t\n\
         j _start                                                                \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-        nop                                                                     \t\n\
-    ");
-    
-
-    //*************ATENÇÃO RAPAZEADA*****************//
-    // TEM QUE CONFERIR SE É ASSIM MESMO ************//
-    // FOI SEGUIDO A TABELA DO VECTOR TABLE DO CLINT //
-
-    // Informação obtida em https://sifive.cdn.prismic.io/sifive/0d163928-2128-42be-a75a-464df65e04e0_sifive-interrupt-cookbook.pdf
-/*
-    ASM("\t\n\
-        .word _vector_table + 1     # mtvec + 0x00 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x04 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x08 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x0c Software Interrupt   \t\n\
-        .word _vector_table + 1     # mtvec + 0x10 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x14 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x18 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x1c Timer Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x20 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x24 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x28 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x2c External Interrupt   \t\n\
-        .word _vector_table + 1     # mtvec + 0x30 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x34 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x38 Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x3c Reserved             \t\n\
-        .word _vector_table + 1     # mtvec + 0x40 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x44 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x48 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x4c Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x50 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x54 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x58 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x5c Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x60 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x64 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x68 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x6c Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x70 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x74 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x78 Local Interrupt      \t\n\
-        .word _vector_table + 1     # mtvec + 0x7c Local Interrupt      \t\n\
         ");
-*/
 }
