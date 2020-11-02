@@ -80,9 +80,8 @@ public:
         return percentage;
     }
 
-    void enable() {}
-
-    void disable() {}
+    using Engine::enable;
+    using Engine::disable;
 
     void handler(const Handler & handler) { _handler = handler; }
 
@@ -90,8 +89,12 @@ public:
         return *(volatile int *) (Memory_Map::CLINT_BASE + MTIME);
     }
 
+    static void set_cycle(const Hertz & frequency) {
+       *(volatile int *) (Memory_Map::CLINT_BASE + MTIMECMP) = frequency + get_cycles();
+    }
+
     static void config(const Hertz & frequency) {
-       *(volatile int *) (Memory_Map::CLINT_BASE + MTIMECMP) = frequency;
+       *(volatile int *) (Memory_Map::CLINT_BASE + MTIMECMP) = frequency + get_cycles();
     }
 
     static Hertz clock() {

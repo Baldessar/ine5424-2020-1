@@ -130,7 +130,7 @@ template<> struct Traits<Thread>: public Traits<Build>
     static const bool trace_idle = hysterically_debugged;
 
     typedef Scheduling_Criteria::Priority Criterion;
-    static const unsigned int QUANTUM = 10000; // us
+    static const unsigned int QUANTUM = 1000000; // us
 };
 
 template<> struct Traits<Scheduler<Thread>>: public Traits<Build>
