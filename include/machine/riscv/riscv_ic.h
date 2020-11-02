@@ -24,11 +24,12 @@ public:
     // MIE interrupt IDs
     enum {
         // interrupt IDs
+        MCAUSE_MASK = 0x3ff
     };
 
     enum {
-        INT_SYS_TIMER   = 0, // IMPLEMENT: FIX this value
-        INT_USER_TIMER0 = 0, // IMPLEMENT: FIX this value
+        INT_SYS_TIMER   = 5, // IMPLEMENT: FIX this value
+        INT_USER_TIMER0 = 7, // IMPLEMENT: FIX this value
         INT_USER_TIMER1 = 0,
         INT_USER_TIMER2 = 0,
         INT_USER_TIMER3 = 0,
@@ -48,7 +49,7 @@ public:
 
     // clint offsets
     enum {
-        // CORE WAKEUP OFFSET
+        ALL_BITS= 0xffffffff
     };
 
 public:
@@ -60,27 +61,27 @@ public:
     }
 
     static void int_vector(Interrupt_Id i, const Interrupt_Handler & h) {
-        db<IC>(TRC) << "IC::int_vector(int=" << i << ",h=" << reinterpret_cast<void *>(h) <<")" << endl;
+        db<IC>(WRN) << "IC::int_vector(int=" << i << ",h=" << reinterpret_cast<void *>(h) <<")" << endl;
         assert(i < INTS);
         _int_vector[i] = h;
     }
 
     static void enable() {
-        db<IC>(TRC) << "IC::enable()" << endl;
+        db<IC>(WRN) << "IC::enable()" << endl;
         // IMPLEMENT
     }
     static void enable(Interrupt_Id i) {
-        db<IC>(TRC) << "IC::enable(int=" << i << ")" << endl;
+        db<IC>(WRN) << "IC::enable(int=" << i << ")" << endl;
         assert(i < INTS);
         // IMPLEMENT
     }
 
     static void disable() {
-        db<IC>(TRC) << "IC::disable()" << endl;
+        db<IC>(WRN) << "IC::disable()" << endl;
         // IMPLEMENT
     }
     static void disable(Interrupt_Id i) {
-        db<IC>(TRC) << "IC::disable(int=" << i << ")" << endl;
+        db<IC>(WRN) << "IC::disable(int=" << i << ")" << endl;
         assert(i < INTS);
         // IMPLEMENT
     }

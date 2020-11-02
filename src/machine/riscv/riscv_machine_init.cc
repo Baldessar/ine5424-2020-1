@@ -27,11 +27,11 @@ void Machine::pre_init(System_Info * si)
 
 void Machine::init()
 {
-    db<Init, Machine>(TRC) << "Machine::init()" << endl;
+    db<Init, Machine>(WRN) << "Machine::init()" << endl;
 
     // IMPLEMENT to uncomment
-    // if(Traits<Timer>::enabled)
-        // Timer::init();
+    if(Traits<Timer>::enabled)
+        Timer::init();
 }
 
 __END_SYS

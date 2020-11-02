@@ -23,6 +23,7 @@ protected:
     static const unsigned int FREQUENCY = Traits<Timer>::FREQUENCY;
 
     typedef IC_Common::Interrupt_Id Interrupt_Id;
+    typedef unsigned long Reg32;
 
 public:
     using Timer_Common::Tick;
@@ -85,16 +86,16 @@ public:
 
     void handler(const Handler & handler) { _handler = handler; }
 
-    unsigned int get_cycles() {
-        return *(volatile int *) (Memory_Map::CLINT_BASE + MTIME);
+    Reg32* get_mtime() {
+        return reg(Memory_Map::CLINT_BASE + MTIME);
     }
 
-    static void set_cycle(const Hertz & frequency) {
-       *(volatile int *) (Memory_Map::CLINT_BASE + MTIMECMP) = frequency + get_cycles();
+    static void set_mtimecmp(const Hertz & frequency) {
+       reg(Memory_Map::CLINT_BASE + MTIMECMP) = frequency + get_cycles();
     }
 
     static void config(const Hertz & frequency) {
-       *(volatile int *) (Memory_Map::CLINT_BASE + MTIMECMP) = frequency + get_cycles();
+       set_mtimecmp(frequency);
     }
 
     static Hertz clock() {
