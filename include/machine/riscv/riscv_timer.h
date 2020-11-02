@@ -36,7 +36,9 @@ public:
 
     // Registers offsets from CLINT_BASE
     enum {                                // Description
-        // IMPLEMENT
+        MSIP,
+        MTIME,
+        MTIMECMP,
     };
 
     static const Hertz CLOCK = Traits<Machine>::TIMER_CLOCK;
