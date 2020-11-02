@@ -1,11 +1,11 @@
 // EPOS RISC-V Program Starter
 
-        .file  rv32_crt0.S 
+        .file  "rv32_crt0.S" 
         // switch function used in riscv_ic.cc
         .section .text
         .align  4
-        .global _exception_handling
-        .type   _exception_handling, function
+        .global _switch
+        .type   _switch, function
 _switch:
 
         addi       sp, sp, -64               

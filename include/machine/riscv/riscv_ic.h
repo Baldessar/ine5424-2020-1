@@ -69,7 +69,7 @@ public:
     static void enable() {
         db<IC>(WRN) << "IC::enable()" << endl;
         CPU::Reg32 mie_reg;
-        ASM("csrrc %0, mie, %1" : "=r"(reg): "r"(_prev_int))
+        ASM("csrrc %0, mie, %1" : "=r"(mie_reg): "r"(_previous));
 
     }
     static void enable(Interrupt_Id i) {
@@ -77,24 +77,24 @@ public:
         assert(i < INTS);
         CPU::Reg32 bit_to_set = 1 << i;
         CPU::Reg32 mie_reg;
-        ASM("csrrc %0, mie, %1" : "=r"(mie_reg): "r"(bit_to_set))
+        ASM("csrrc %0, mie, %1" : "=r"(mie_reg): "r"(bit_to_set));
     }
 
     static void disable() {
         db<IC>(WRN) << "IC::disable()" << endl;
-        ASM("csrrc %0, mie, %1" : "=r"(_prev_int) : "r"(ALL_BITS))
+        ASM("csrrc %0, mie, %1" : "=r"(_previous) : "r"(ALL_BITS));
     }
     static void disable(Interrupt_Id i) {
         db<IC>(WRN) << "IC::disable(int=" << i << ")" << endl;
         assert(i < INTS);
         CPU::Reg32 bit_to_clear = 1 << i;
         CPU::Reg32 mie_reg;
-        ASM("csrrc %0, mie, %1" : "=r"(mie_reg): "r"(bit_to_clear))
+        ASM("csrrc %0, mie, %1" : "=r"(mie_reg): "r"(bit_to_clear));
     }
 
     static Interrupt_Id int_id() {
         CPU::Reg32 mcause_reg;
-        ASM("csrr, mcause": "=r"(mcause_reg))
+        ASM("csrr %0, mcause": "=r"(mcause_reg));
         return mcause_reg & MCAUSE_MASK;
     }
 
@@ -135,6 +135,7 @@ private:
     static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(Memory_Map::CLINT_BASE)[o / sizeof(CPU::Reg32)]; }
 
 private:
+    static CPU::Reg32 _previous;
     static Interrupt_Handler _int_vector[INTS];
 };
 

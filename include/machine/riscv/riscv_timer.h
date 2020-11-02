@@ -81,17 +81,14 @@ public:
         return percentage;
     }
 
-    using Engine::enable;
-    using Engine::disable;
+    void enable() {}
+
+    void disable() {}
 
     void handler(const Handler & handler) { _handler = handler; }
 
-    Reg32* get_mtime() {
-        return reg(Memory_Map::CLINT_BASE + MTIME);
-    }
-
     static void set_mtimecmp(const Hertz & frequency) {
-       reg(Memory_Map::CLINT_BASE + MTIMECMP) = frequency + get_cycles();
+       reg(Memory_Map::CLINT_BASE + MTIMECMP) = frequency + reg(Memory_Map::CLINT_BASE + MTIME);
     }
 
     static void config(const Hertz & frequency) {

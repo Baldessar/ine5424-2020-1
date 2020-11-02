@@ -18,7 +18,7 @@ __BEGIN_SYS
 extern "C" void m_trap(unsigned int epc, unsigned int tval,unsigned int cause,unsigned int hart, unsigned int status) {
     bool async = cause >> 31;
 
-    unsigned int cause_number = cause 0xF;
+    unsigned int cause_number =cause & 0xF;
     if (async) {
        switch (cause_number)
        {
@@ -37,7 +37,7 @@ extern "C" void m_trap(unsigned int epc, unsigned int tval,unsigned int cause,un
 
 // Class attributes
 IC::Interrupt_Handler IC::_int_vector[IC::INTS];
-CPU::Reg32 IC::_prev_int;
+CPU::Reg32 IC::_previous;
 // Class methods
 void IC::entry()
 {
