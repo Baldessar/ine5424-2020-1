@@ -16,11 +16,13 @@ class TSC: private TSC_Common
 
 private:
     static const unsigned int CLOCK = Traits<Machine>::TIMER_CLOCK;
-    static const unsigned int ACCURACY = 40000; // this is actually unknown at the moment
+    static const unsigned int ACCURACY = 0; // this is actually unknown at the moment
 
     // Registers offsets from CLINT_BASE
-    enum {               // Description
-        // IMPLEMENT
+    enum {  
+        MSIP            = 0x00000000,
+        MTIMECMP        = 0X00004000,
+        MTIME           = 0x0000bff8,  
     };
 
 public:

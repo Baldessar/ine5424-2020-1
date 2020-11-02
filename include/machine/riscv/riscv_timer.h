@@ -36,7 +36,9 @@ public:
 
     // Registers offsets from CLINT_BASE
     enum {                                // Description
-        // IMPLEMENT
+        MSIP            = 0x00000000,
+        MTIMECMP        = 0X00004000,
+        MTIME           = 0x0000bff8,  // IMPLEMENT (mtime_base)
     };
 
     static const Hertz CLOCK = Traits<Machine>::TIMER_CLOCK;
@@ -84,8 +86,12 @@ public:
 
     void handler(const Handler & handler) { _handler = handler; }
 
+    unsigned int get_cycles() {
+        return *(volatile int *) (Memory_Map::CLINT_BASE + MTIME);
+    }
+
     static void config(const Hertz & frequency) {
-        // IMPLEMENT: set timer to next interrupt
+       *(volatile int *) (Memory_Map::CLINT_BASE + MTIMECMP) = frequency;
     }
 
     static Hertz clock() {
