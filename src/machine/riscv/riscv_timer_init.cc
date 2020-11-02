@@ -7,7 +7,7 @@ __BEGIN_SYS
 
 void Timer::init()
 {
-    db<Init, Timer>(TRC) << "Timer::init()" << endl;
+    db<Init, Timer>(WRN) << "Timer::init()" << endl;
 
     IC::int_vector(IC::INT_SYS_TIMER, int_handler);
     IC::enable(IC::INT_SYS_TIMER);

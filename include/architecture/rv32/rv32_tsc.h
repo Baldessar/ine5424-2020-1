@@ -37,7 +37,7 @@ public:
     static PPB accuracy() { return ACCURACY; }
 
     static Time_Stamp time_stamp() { 
-        return *(volatile int *) (Memory_Map::CLINT_BASE + MTIME);
+        return CPU::Reg64(0);
     }
 
 private:
