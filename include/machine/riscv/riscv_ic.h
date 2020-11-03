@@ -68,27 +68,34 @@ public:
 
     static void enable() {
         db<IC>(WRN) << "IC::enable()" << endl;
-        // IMPLEMENT
+        CPU::Reg32 mie_reg;
+        ASM("csrrc %0, mie, %1" : "=r"(reg): "r"(_prev_int))
+
     }
     static void enable(Interrupt_Id i) {
         db<IC>(WRN) << "IC::enable(int=" << i << ")" << endl;
         assert(i < INTS);
-        // IMPLEMENT
+        CPU::Reg32 bit_to_set = 1 << i;
+        CPU::Reg32 mie_reg;
+        ASM("csrrc %0, mie, %1" : "=r"(mie_reg): "r"(bit_to_set))
     }
 
     static void disable() {
         db<IC>(WRN) << "IC::disable()" << endl;
-        // IMPLEMENT
+        ASM("csrrc %0, mie, %1" : "=r"(_prev_int) : "r"(ALL_BITS))
     }
     static void disable(Interrupt_Id i) {
         db<IC>(WRN) << "IC::disable(int=" << i << ")" << endl;
         assert(i < INTS);
-        // IMPLEMENT
+        CPU::Reg32 bit_to_clear = 1 << i;
+        CPU::Reg32 mie_reg;
+        ASM("csrrc %0, mie, %1" : "=r"(mie_reg): "r"(bit_to_clear))
     }
 
     static Interrupt_Id int_id() {
-        // IMPLEMENT
-        return 0;
+        CPU::Reg32 mcause_reg;
+        ASM("csrr, mcause": "=r"(mcause_reg))
+        return mcause_reg & MCAUSE_MASK;
     }
 
     int irq2int(int i) { return i; }
