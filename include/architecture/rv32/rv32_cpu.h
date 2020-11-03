@@ -204,7 +204,7 @@ public:
     }
 
     using CPU_Common::cas;
-     template <typename T>
+    template <typename T>
     static T cas(volatile T & value, T compare, T replacement) {
         register T old;
         ASM("1: lr.w   %0, %1           \n"

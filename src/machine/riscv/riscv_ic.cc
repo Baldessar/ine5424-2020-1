@@ -15,6 +15,26 @@ extern "C" { void _exception_handling() __attribute__ ((alias("_ZN4EPOS1S2IC18ex
 
 __BEGIN_SYS
 
+extern "C" void m_trap(unsigned int epc, unsigned int tval,unsigned int cause,unsigned int hart, unsigned int status) {
+    bool async = cause >> 31;
+
+    unsigned int cause_number = cause 0xF;
+    if (async) {
+       switch (cause_number)
+       {
+            case 5:
+                db<IC>(WRN) << "Cause_Number: 5"<< endl;
+                break;
+            case 7:
+                db<IC>(WRN) << "Cause_Number: 7"<< endl;
+                break;
+       
+       default:
+           break;
+       } 
+    }
+}
+
 // Class attributes
 IC::Interrupt_Handler IC::_int_vector[IC::INTS];
 
