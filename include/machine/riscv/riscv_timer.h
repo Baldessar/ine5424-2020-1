@@ -87,12 +87,9 @@ public:
 
     void handler(const Handler & handler) { _handler = handler; }
 
-    static void set_mtimecmp(const Hertz & frequency) {
-       reg(Memory_Map::CLINT_BASE + MTIMECMP) = frequency + reg(Memory_Map::CLINT_BASE + MTIME);
-    }
 
     static void config(const Hertz & frequency) {
-       set_mtimecmp(frequency);
+       reg( MTIMECMP) = frequency + reg(MTIME);
     }
 
     static Hertz clock() {

@@ -12,6 +12,7 @@ void Timer::init()
     IC::int_vector(IC::INT_SYS_TIMER, int_handler);
     IC::enable(IC::INT_SYS_TIMER);
     config(FREQUENCY);
+    db<Init, Timer>(WRN) << "Timer::init() end " << endl;
 }
 
 __END_SYS
