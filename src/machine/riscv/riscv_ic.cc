@@ -23,10 +23,10 @@ extern "C" void m_trap(unsigned int epc, unsigned int tval,unsigned int cause,un
        switch (cause_number)
        {
             case 5:
-                db<IC>(WRN) << "Cause_Number: 5"<< endl;
+                db<IC>(INF) << "Cause_Number: 5"<< endl;
                 break;
             case 7:
-                db<IC>(WRN) << "Cause_Number: 7"<< endl;
+                db<IC>(INF) << "Cause_Number: 7"<< endl;
                 break;
        
        default:
@@ -48,16 +48,16 @@ void IC::entry()
 void IC::dispatch()
 {
     Interrupt_Id id = int_id();
-
+ db<IC>(INF) << "IC::dispatch(i=" << id << ")" << endl;
     if((id != INT_SYS_TIMER) || Traits<IC>::hysterically_debugged)
-        db<IC>(TRC) << "IC::dispatch(i=" << id << ")" << endl;
+        db<IC>(INF) << "IC::dispatch(i=" << id << ")" << endl;
 
     _int_vector[id](id);
 }
 
 void IC::int_not(Interrupt_Id i)
 {
-    db<IC>(WRN) << "IC::int_not(i=" << i << ")" << endl;
+    db<IC>(INF) << "IC::int_not(i=" << i << ")" << endl;
 }
 
 void IC::hard_fault(Interrupt_Id i)

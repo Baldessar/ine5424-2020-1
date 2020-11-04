@@ -61,19 +61,19 @@ public:
     }
 
     static void int_vector(Interrupt_Id i, const Interrupt_Handler & h) {
-        db<IC>(WRN) << "IC::int_vector(int=" << i << ",h=" << reinterpret_cast<void *>(h) <<")" << endl;
+        db<IC>(INF) << "IC::int_vector(int=" << i << ",h=" << reinterpret_cast<void *>(h) <<")" << endl;
         assert(i < INTS);
         _int_vector[i] = h;
     }
 
     static void enable() {
-        db<IC>(WRN) << "IC::enable()" << endl;
+        db<IC>(INF) << "IC::enable()" << endl;
         CPU::Reg32 mie_reg;
         ASM("csrrc %0, mie, %1" : "=r"(mie_reg): "r"(_previous));
 
     }
     static void enable(Interrupt_Id i) {
-        db<IC>(WRN) << "IC::enable(int=" << i << ")" << endl;
+        db<IC>(INF) << "IC::enable(int=" << i << ")" << endl;
         assert(i < INTS);
         CPU::Reg32 bit_to_set = 1 << i;
         CPU::Reg32 mie_reg;
@@ -81,11 +81,11 @@ public:
     }
 
     static void disable() {
-        db<IC>(WRN) << "IC::disable()" << endl;
+        db<IC>(INF) << "IC::disable()" << endl;
         ASM("csrrc %0, mie, %1" : "=r"(_previous) : "r"(ALL_BITS));
     }
     static void disable(Interrupt_Id i) {
-        db<IC>(WRN) << "IC::disable(int=" << i << ")" << endl;
+        db<IC>(INF) << "IC::disable(int=" << i << ")" << endl;
         assert(i < INTS);
         CPU::Reg32 bit_to_clear = 1 << i;
         CPU::Reg32 mie_reg;
