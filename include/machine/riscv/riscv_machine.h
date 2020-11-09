@@ -35,7 +35,7 @@ public:
     {
         if (Traits<System>::reboot) {
             db<Machine>(WRN) << "Machine::reboot()" << endl;
-            poweroff();
+            CPU::halt();
         } else {
             poweroff();
         }

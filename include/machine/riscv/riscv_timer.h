@@ -23,7 +23,6 @@ protected:
     static const unsigned int FREQUENCY = Traits<Timer>::FREQUENCY;
 
     typedef IC_Common::Interrupt_Id Interrupt_Id;
-    typedef unsigned long Reg32;
 
 public:
     using Timer_Common::Tick;
@@ -37,9 +36,10 @@ public:
 
     // Registers offsets from CLINT_BASE
     enum {                                // Description
-        MSIP            = 0x00000000,
-        MTIMECMP        = 0X00004000,
-        MTIME           = 0x0000bff8,  // IMPLEMENT (mtime_base)
+        MTIME                   = 0xbff8, // Counter (lower 32 bits, unique for all harts)
+        MTIMEH                  = 0xbffc, // Counter (upper 32 bits, unique for all harts)
+        MTIMECMP                = 0x4000, // Compare (32-bit, per hart register)
+        MTIMECMP_CORE_OFFSET    = 8       // Offset in MTIMECMP for each hart's compare register
     };
 
     static const Hertz CLOCK = Traits<Machine>::TIMER_CLOCK;
@@ -87,9 +87,9 @@ public:
 
     void handler(const Handler & handler) { _handler = handler; }
 
-
     static void config(const Hertz & frequency) {
-       reg( MTIMECMP) = frequency + reg(MTIME);
+        // ASM("csrw mcause, zero"); // This clears mcause to ease debugging
+        reg(MTIMECMP + MTIMECMP_CORE_OFFSET * CPU::id()) = reg(MTIME) + (CLOCK / frequency);
     }
 
     static Hertz clock() {

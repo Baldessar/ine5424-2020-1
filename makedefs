@@ -26,6 +26,10 @@ LUTILNAME	:= util
 # Makefile hacks
 APPLICATIONS	:= $(shell find $(APP) -maxdepth 1 -not -name makefile -and -not -name app -printf "%f\n")
 
+ifeq ($(words $(APPLICATIONS)),0)
+$(error EPOS is an application-oriented operating system, but there is no application in $(APP)!)
+endif
+
 ifeq ($(words $(APPLICATIONS)),1)
 ifndef APPLICATION
 APPLICATION	:= $(word 1, $(APPLICATIONS))
@@ -90,7 +94,7 @@ UUID                    = $(shell cat /proc/sys/kernel/random/uuid | sed 's/-//g
 ia32_COMP_PREFIX	:= /usr/bin/x86_64-linux-gnu-
 armv7_COMP_PREFIX	:= /usr/bin/arm-none-eabi-
 armv8_COMP_PREFIX	:= /usr/bin/arm-none-eabi-
-rv32_COMP_PREFIX	:= /opt/riscv/bin/riscv32-unknown-linux-gnu-
+rv32_COMP_PREFIX	:= /usr/bin/riscv32-linux-gnu-
 COMP_PREFIX		= $($(ARCH)_COMP_PREFIX)
 
 # Machine specifics
