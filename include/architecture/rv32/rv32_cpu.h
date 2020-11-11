@@ -170,47 +170,43 @@ public:
 
 
     // Atomic operations
-    using CPU_Common::tsl;
     template<typename T>
     static T tsl(volatile T & lock) {
         register T old;
         register T one = 1;
-        ASM("1: lr.w  %0, %1            \n"
-            "   sc.w  t3, %1, %2        \n" // sc.w rd, address, value
-            "   bne   t3, zero, 1b      \n" : "=&r"(old) : "r"(&lock), "r"(one) : "t3");
+        ASM("1: lr.w  %0, (%1)            \n"
+            "   sc.w  t3, %2, (%1)        \n" // sc.w rd, address, value
+            "   bne   t3, zero, 1b      \n" : "=&r"(old) : "r"(lock), "r"(one) : "t3");
         return old;
     }
 
-    using CPU_Common::finc;
     template<typename T>
     static T finc(volatile T & value) {
         register T old;
-        ASM("1: lr.w  %0, %1            \n" //carrega atomicamente o valor de lock em old
-            "   addi     %0, 1          \n" //Acrescenta 1 em old(valor de lock)
+        ASM("1: lr.w  %0, (%1)            \n" //carrega atomicamente o valor de lock em old
+            "   addi     %0, %0, 1          \n" //Acrescenta 1 em old(valor de lock)
             "   amoswap.w  t3, %0, (%1) \n" //amoswap.w rd, r2, address
-            "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) :"t3");
+            "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(value) :"t3");
         return old - 1;
     }
 
-    using CPU_Common::fdec;
     template<typename T>
     static T fdec(volatile T & value) {
         register T old;
-        ASM("1: lr.w  %0, %1            \n"
+        ASM("1: lr.w  %0, (%1)            \n"
             "   addi    t3, zero, 1     \n"
             "   sub     %0, %0, t3      \n"
-            "   sc.w    t3, %0, %1      \n"
-            "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) : "t3", "cc");
+            "   sc.w    t3, %0, (%1)      \n"
+            "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(value) : "t3", "cc");
         return old + 1;
     }
 
-    using CPU_Common::cas;
     template <typename T>
     static T cas(volatile T & value, T compare, T replacement) {
         register T old;
-        ASM("1: lr.w   %0, %1           \n"
+        ASM("1: lr.w   %0, (%1)           \n"
             "   bne    %0, %2, 2f       \n"
-            "   sc.w   t3, %1, %3       \n"
+            "   sc.w   t3, %1, (%3)       \n"
             "   bne    t3, zero, 1b     \n"
             "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t3", "cc");
         return old;
