@@ -50,7 +50,10 @@ public:
 
     static void smp_barrier_init(unsigned int n_cpus) {
         db<Machine>(TRC) << "SMP::init()" << endl;
-        // IMPLEMENT
+        IC::int_vector(IC::MACHINE_SOFT_INT, IC::ipi_eoi);
+        for (unsigned int i = 1; i < n_cpus; i++) {
+            IC::ipi(i, IC::MACHINE_SOFT_INT);
+        }
     }
 
     static const UUID & uuid() { return System::info()->bm.uuid; }

@@ -176,7 +176,7 @@ public:
         register T one = 1;
         ASM("1: lr.w  %0, (%1)            \n"
             "   sc.w  t3, %2, (%1)        \n" // sc.w rd, address, value
-            "   bne   t3, zero, 1b      \n" : "=&r"(old) : "r"(&lock), "r"(one) : "t3", "cc");
+            "   bne   t3, zero, 1b      \n" : "=&r"(old) : "r"(&lock), "r"(one) : "t3", "cc", "memory");
         return old;
     }
 
@@ -186,7 +186,7 @@ public:
         ASM("1: lr.w  %0, (%1)            \n" //carrega atomicamente o valor de lock em old
             "   addi     %0, %0, 1          \n" //Acrescenta 1 em old(valor de lock)
             "   sc.w  t3, %0, (%1) \n"  //amoswap.w rd, r2, address
-            "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) :"t3", "cc");
+            "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) :"t3", "cc", "memory");
         return old - 1;
     }
 
@@ -197,7 +197,7 @@ public:
             "   addi    t3, zero, 1     \n"
             "   sub     %0, %0, t3      \n"
             "   sc.w    t3, %0, (%1)      \n"
-            "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) : "t3", "cc");
+            "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) : "t3", "cc", "memory");
         return old + 1;
     }
 
@@ -208,7 +208,7 @@ public:
             "   bne    %0, %2, 2f       \n"
             "   sc.w   t3, %3, (%1)       \n"
             "   bne    t3, zero, 1b     \n"
-            "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t3", "cc");
+            "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t3", "cc", "memory");
         return old;
     }
 

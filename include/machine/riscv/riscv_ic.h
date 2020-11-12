@@ -137,7 +137,7 @@ public:
 
     static void ipi_eoi(Interrupt_Id i) {
         // limpando o msip da cpu
-        reg(CPU::id() * MSIP_CORE_OFFSET) = 0;
+        reg(CPU::id() * OFFSET_MSIP) = 0;
     }
 
 
