@@ -59,7 +59,7 @@ public:
 
     // clint offsets
     enum {
-        // CORE WAKEUP OFFSET
+        OFFSET_MSIP = 4,
     };
 
 public:
@@ -131,11 +131,13 @@ public:
     static void ipi(unsigned int cpu, Interrupt_Id i) {
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
-        // IMPLEMENT
+        //setando o id da interrupcao no registrador msip da cpu
+        reg(OFFSET_MSIP * cpu ) = 0x1 << i; 
     }
 
     static void ipi_eoi(Interrupt_Id i) {
-        // IMPLEMENT
+        // limpando o msip da cpu
+        reg(CPU::id() * MSIP_CORE_OFFSET) = 0;
     }
 
 
