@@ -187,7 +187,7 @@ public:
             "   addi     %0, %0, 1          \n" //Acrescenta 1 em old(valor de lock)
             "   sc.w  t3, %0, (%1) \n"  //amoswap.w rd, r2, address
             "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) :"t3", "cc", "memory");
-        return old - 1;
+        return old ;
     }
 
     template<typename T>
@@ -198,7 +198,7 @@ public:
             "   sub     %0, %0, t3      \n"
             "   sc.w    t3, %0, (%1)      \n"
             "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) : "t3", "cc", "memory");
-        return old + 1;
+        return old ;
     }
 
     template <typename T>

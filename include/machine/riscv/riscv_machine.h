@@ -51,8 +51,8 @@ public:
     static void smp_barrier_init(unsigned int n_cpus) {
         db<Machine>(TRC) << "SMP::init()" << endl;
         IC::int_vector(IC::MACHINE_SOFT_INT, IC::ipi_eoi);
-        for (unsigned int i = 1; i < n_cpus; i++) {
-            IC::ipi(i, IC::MACHINE_SOFT_INT);
+        for (unsigned int cpu_id = 1; cpu_id < n_cpus; cpu_id++) {
+            IC::ipi(cpu_id, IC::MACHINE_SOFT_INT);
         }
     }
 
