@@ -10,17 +10,12 @@ __BEGIN_SYS
 extern "C" { void __epos_app_entry(); }
 
 void Thread::init()
-{
-    
+{    
     db<Init, Thread>(TRC) << "Thread::init()" << endl;
 
     CPU::smp_barrier();
-
     if(CPU::id() == 0){
-
-        // If EPOS is a library, then adjust the application entry point to __epos_app_entry,
-        // which will directly call main(). In this case, _init will have already been called,
-        // before Init_Application to construct MAIN's global objects.
+        //create thread for main
         new (SYSTEM) Thread(Thread::Configuration(Thread::RUNNING, Thread::MAIN), reinterpret_cast<int (*)()>(__epos_app_entry));
     }
     CPU::smp_barrier();
@@ -38,7 +33,6 @@ void Thread::init()
     if(Criterion::timed)
         _timer = new (SYSTEM) Scheduler_Timer(QUANTUM, time_slicer);
 
-    CPU::smp_barrier();
 
     // Transition from CPU-based locking to thread-based locking
     This_Thread::not_booting();

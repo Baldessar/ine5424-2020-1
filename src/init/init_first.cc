@@ -16,7 +16,7 @@ public:
             CPU::int_enable();
             return;
         }
-
+        //CPU::smp_barrier();
         db<Init>(INF) << "INIT ends here!" << endl;
 
         // Thread::self() and Task::self() can be safely called after the construction of MAIN

@@ -294,7 +294,7 @@ TCPDUMP		:= tcpdump -tttttennvvvXXr
 
 TEE		:= tee
 
-TERM		:=  gnome-terminal --
+TERM		:= gnome-terminal --
 
 TOUCH		:= touch
 
