@@ -1,0 +1,15 @@
+Machine::pre_init()
+Machine::pre_init()
+Machine::pre_init()
+Machine::pre_init()
+----------------------------------
+       TESTES CRITÉRIO 3 - INÍCIO 
+----------------------------------
+Context Switch
+Computando coisas em:0x87fe7e4c
+Computando coisas em:0x87fe3e20
+Computando coisas em:0x87fdfdf4
+PANIC!
+PANIC!
+PANIC!
+PANIC!

@@ -59,7 +59,7 @@ public:
 
     // clint offsets
     enum {
-        // CORE WAKEUP OFFSET
+        MSIP_CORE_OFFSET        = 4
     };
 
 public:
@@ -131,11 +131,15 @@ public:
     static void ipi(unsigned int cpu, Interrupt_Id i) {
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
-        // IMPLEMENT
+        // accessing a Reg32 pointer as a vector in the core position is the same as applying the offset of a register size
+        reg(cpu * MSIP_CORE_OFFSET) = 0x1 << i; 
     }
 
     static void ipi_eoi(Interrupt_Id i) {
-        // IMPLEMENT
+        // The only thing that is necessary here is to clear the MSIP register for the running core
+        reg(CPU::id() * MSIP_CORE_OFFSET) = 0; 
+        // This helps debug as the flag will be down earlier
+        ASM("csrw mcause, zero" : : : "memory", "cc");
     }
 
 
