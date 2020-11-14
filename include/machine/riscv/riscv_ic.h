@@ -138,6 +138,7 @@ public:
     static void ipi_eoi(Interrupt_Id i) {
         // limpando o msip da cpu
         reg(CPU::id() * OFFSET_MSIP) = 0;
+        ASM("csrw mcause, zero" : : : "memory", "cc");
     }
 
 
