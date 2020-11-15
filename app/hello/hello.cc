@@ -10,9 +10,8 @@ int j;
 
 int func(int n)
 {
-    for(int i = 0; i < 5000; i++){
+    for(int i = 0; i < 5; i++){
         cout << n << " cpu id:" << CPU::id() << endl;
-        Thread::yield();
     }
     return 0;
 }
@@ -49,5 +48,5 @@ int main()
     cout << "       TESTES CRITÉRIO 3 - FIM    " << endl;
     cout << "----------------------------------" << endl;
 
-    return 0;
+    return 500;
 }
