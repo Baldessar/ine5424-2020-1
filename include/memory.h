@@ -9,6 +9,7 @@ __BEGIN_SYS
 
 class Address_Space: private MMU::Directory
 {
+    friend class Task;
 
 private:
     using MMU::Directory::activate;
