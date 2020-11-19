@@ -11,7 +11,7 @@ public:
     Init_First() {
         db<Init>(TRC) << "Init_First()" << endl;
 
-        CPU::smp_barrier();
+        // CPU::smp_barrier(); //6/7
         if(!Traits<System>::multithread) {
             CPU::int_enable();
             return;
@@ -25,7 +25,7 @@ public:
 
         db<Init, Thread>(INF) << "Dispatching the first thread: " << first << endl;
 
-        CPU::smp_barrier();
+        CPU::smp_barrier(); //7/8
         CPU::int_enable();
         first->_context->load();
     }

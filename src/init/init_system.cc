@@ -15,11 +15,11 @@ private:
 
 public:
     Init_System() {
+	    CPU::smp_barrier(); // barrier 1
         db<Init>(TRC) << "Init_System()" << endl;
 
-	    CPU::smp_barrier();
         if(CPU::id() != 0){
-            CPU::smp_barrier();
+            CPU::smp_barrier(); // barrier 1/2
             CPU::init();
             Timer::init();
             Thread::init();
@@ -47,7 +47,7 @@ public:
         Machine::init();
         db<Init>(INF) << "done!" << endl;
 
-        CPU::smp_barrier();
+        CPU::smp_barrier();//barrier 2/3
 
         // Initialize system abstractions
         db<Init>(INF) << "Initializing system abstractions: " << endl;

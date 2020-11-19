@@ -10,8 +10,7 @@ void Machine::pre_init(System_Info * si)
         Display::init();
 
     db<Init>(WRN) << "Machine::pre_init()" << endl;
-
-    db<Init, Machine>(TRC) << "Machine::pre_init()" << endl;
+    //db<Init, Machine>(TRC) << "Machine::pre_init()" << endl;
 
     if(CPU::id() == 0) {
         if(Traits<IC>::enabled) {
@@ -23,6 +22,7 @@ void Machine::pre_init(System_Info * si)
                 smp_barrier_init(Traits<Build>::CPUS);
         }
     }
+    // CPU::smp_barrier();
 }
 
 void Machine::init()
