@@ -3,7 +3,6 @@
 
 using namespace EPOS;
 
-
 OStream cout;
 char buffer[2];
 
@@ -54,58 +53,28 @@ int func(int n)
 
 int main()
 {
-    cout << "----------------------------------" << endl;
-    cout << "       TESTES CRITÉRIO 1 - INÍCIO " << endl;
-    cout << "----------------------------------" << endl;
+    cout << "Teste 1" << endl;
 
-    cout << "Teste verificando a corretude da inicialização" << endl;
+    cout << "Inicializacao do sistema e dos cores, e uso das barriers" << endl;
 
-    cout << "Thread main rodando no Hart: " << CPU::id() << endl;
+    cout << "Esse teste cria quatro threads" << endl;
 
-    cout << "As próximas threads irão rodar um loop e será printado o ID dos harts" << endl;
-    cout << "Assim é possível notar que todos os harts estão computando algo" << endl;
-
-    Thread * a_thread = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(10000000)), &func, 1);
-    Thread * b_thread = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(50000000)), &func, 5);
-    Thread * c_thread = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(30000000)), &func, 3);
-    Thread * d_thread = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(20000000)), &func, 2);
-    Thread * e_thread = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(10000000)), &func, 1);
-    Thread * f_thread = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(50000000)), &func, 5);
-    Thread * g_thread = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(30000000)), &func, 3);
-    Thread * h_thread = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(20000000)), &func, 2);
+    Thread * t1 = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(10000000)), &func, 1);
+    Thread * t2 = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(10000000)), &func, 2);
+    Thread * t3 = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(10000000)), &func, 3);
+    Thread * t4 = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(10000000)), &func, 4);
 
     cout << endl;
-    a_thread->join();
-    cout << "Joining thread:" << a_thread <<endl;
-    b_thread->join();
-    cout << "Joining thread:" << b_thread <<endl;
-    c_thread->join();
-    cout << "Joining thread:" << c_thread <<endl;
-    d_thread->join();
-    cout << "Joining thread:" << d_thread <<endl;
-    e_thread->join();
-    cout << "Joining thread:" << e_thread <<endl;
-    f_thread->join();
-    cout << "Joining thread:" << f_thread <<endl;
-    g_thread->join();
-    cout << "Joining thread:" << g_thread <<endl;
-    h_thread->join();
-    cout << "Joining thread:" << h_thread <<endl;
-
+    t1->join();
+    t2->join();
+    t3->join();
+    t4->join();
     cout << "The end!" << endl;
 
-    delete a_thread;
-    delete b_thread;
-    delete c_thread;
-    delete d_thread;
-    delete e_thread;
-    delete f_thread;
-    delete g_thread;
-    delete h_thread;
-
-    cout << "----------------------------------" << endl;
-    cout << "       TESTES CRITÉRIO 1 - FIM    " << endl;
-    cout << "----------------------------------" << endl;
+    delete t1;
+    delete t2;
+    delete t3;
+    delete t4;
 
     return 0;
 }
