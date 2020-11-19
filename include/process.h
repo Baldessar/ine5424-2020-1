@@ -24,6 +24,7 @@ class Thread
     friend class System;
 
 protected:
+    static const bool smp = Traits<Thread>::smp;
     static const bool preemptive = Traits<Thread>::Criterion::preemptive;
     static const bool reboot = Traits<System>::reboot;
 
@@ -110,6 +111,7 @@ protected:
     static void wakeup_all(Queue * q);
 
     static void reschedule();
+    static void rescheduler(IC::Interrupt_Id interrupt);
     static void time_slicer(IC::Interrupt_Id interrupt);
 
     static void dispatch(Thread * prev, Thread * next, bool charge = true);

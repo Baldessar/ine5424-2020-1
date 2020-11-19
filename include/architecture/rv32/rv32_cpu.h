@@ -171,13 +171,55 @@ public:
 
     // Atomic operations
 
-    using CPU_Common::tsl; // IMPLEMENT
+    template<typename T>
+    static T finc(volatile T & value) {
+        register T old;
+        ASM("1: lr.w    %0, (%1)        \n"
+            "   addi    %0, %0, 1       \n"
+            "   sc.w    t0, %0, (%1)    \n"
+            "   bne    t0, zero, 1b          \n" : "=&r"(old) : "r"(&value) : "t0", "cc", "memory");
+        return old - 1;
+    }
 
-    using CPU_Common::finc; // IMPLEMENT
+    // using CPU_Common::fdec;
+    template<typename T>
+    static T fdec(volatile T & value) {
+        register T old;
+        ASM("1: lr.w    %0, (%1)        \n"
+            "   addi    %0, %0, -1      \n"
+            "   sc.w    t0, %0, (%1)    \n"
+            "   bne    t0, zero, 1b          \n" : "=&r"(old) : "r"(&value) : "t0", "cc", "memory");
+        return old + 1;
+    }
 
-    using CPU_Common::fdec; // IMPLEMENT
+    template<typename T>
+    static T tsl(volatile T & lock) {
+        register T old;
+        register T one = 1;
+        ASM("1: lr.w    %0, (%1)        \n"
+            "   sc.w    t0, %2, (%1)    \n"
+            "   bne    t0, zero, 1b              \n" : "=&r"(old) : "r"(&lock), "r"(one) : "t0", "cc", "memory");
+        return old;
+    }
 
-    using CPU_Common::cas; // IMPLEMENT
+    template <typename T>
+    static T cas(volatile T & value, T compare, T replacement) {
+        register T old;
+        ASM("1: lr.w    %0, (%1)        \n"
+            "   bne     %0, %2, 2f      \n"
+            "   sc.w    t0, %3, (%1)    \n"
+            "   bne    t0, zero, 1b          \n"
+            "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t0", "cc", "memory");
+        return old;
+    }
+
+    // using CPU_Common::tsl; // IMPLEMENT
+
+    // using CPU_Common::finc; // IMPLEMENT
+
+    // using CPU_Common::fdec; // IMPLEMENT
+
+    // using CPU_Common::cas; // IMPLEMENT
 
     // Power modes
     static void halt() { ASM("wfi"); }

@@ -293,6 +293,12 @@ void Thread::wakeup_all(Queue * q)
     } else
         unlock();
 }
+void Thread::rescheduler(IC::Interrupt_Id i)
+{
+    lock();
+
+    reschedule();
+}
 
 
 void Thread::reschedule()

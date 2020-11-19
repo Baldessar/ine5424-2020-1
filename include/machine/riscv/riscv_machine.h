@@ -35,7 +35,7 @@ public:
     {
         if (Traits<System>::reboot) {
             db<Machine>(WRN) << "Machine::reboot()" << endl;
-            CPU::halt();
+            poweroff();
         } else {
             poweroff();
         }
@@ -50,7 +50,10 @@ public:
 
     static void smp_barrier_init(unsigned int n_cpus) {
         db<Machine>(TRC) << "SMP::init()" << endl;
-        // IMPLEMENT
+       IC::int_vector(3, IC::ipi_eoi);
+        for (unsigned int i = 1; i < n_cpus; i++) {
+            IC::ipi(i, 3);
+        }
     }
 
     static const UUID & uuid() { return System::info()->bm.uuid; }
