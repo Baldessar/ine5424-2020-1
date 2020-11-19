@@ -11,10 +11,8 @@ __BEGIN_SYS
 Alarm_Timer * Alarm::_timer;
 volatile Alarm::Tick Alarm::_elapsed;
 Alarm::Queue Alarm::_request;
+Spin Alarm::_lock;
 
-// Class Methods
-inline void Alarm::lock() { Thread::lock(); }
-inline void Alarm::unlock() { Thread::unlock(); }
 
 // Methods
 Alarm::Alarm(const Microsecond & time, Handler * handler, unsigned int times)
